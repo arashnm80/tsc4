@@ -10,12 +10,12 @@
 }
 
 int cell_hash(cell c) asm "HASHCU";
+int cell_null?(cell c) asm "ISNULL";
+slice begin_parse(cell c) asm "CTOS";
+int slice_refs(slice s) asm "SREFS";
 (slice, cell) load_ref(slice s) asm( -> 1 0) "LDREF";
 cell preload_ref(slice s) asm "PLDREF";
 tuple empty_tuple() asm "NIL";
-int slice_refs(slice s) asm "SREFS";
-slice begin_parse(cell c) asm "CTOS";
-int cell_null?(cell c) asm "ISNULL";
 
 
 global int found_cell;
@@ -32,14 +32,13 @@ global int found_root;
       found_root = 0;
     }
     return tree;
-    return begin_cell().end_cell();
   }
 
 
   slice cs = tree.begin_parse();
   int ref_count = cs.slice_refs();
   repeat(ref_count){
-    cell ref = cs~load_ref(); ;; load cell from slice cs
+    cell ref = cs~preload_ref(); ;; load cell from slice cs
     cell ref_result = find_branch_by_hash(hash, ref);
 
     if(ref_result.cell_null?() == 0){ ;; if answer is found in this branch
@@ -57,7 +56,7 @@ global int found_root;
   }
   
 
-  ;; return begin_cell().end_cell(); ;; base condition -> 5 of 13 or passed with this
+  return begin_cell().end_cell(); ;; base condition -> 5 of 13 or passed with this
 }
 
 
