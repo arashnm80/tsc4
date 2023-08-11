@@ -32,7 +32,7 @@ tuple empty_tuple() asm "NIL";
     }
     cell ref_result = find_branch_by_hash(hash, ref);
     if(ref_result.begin_parse().slice_empty?() == 0){ ;; if answer is found in this branch
-      return ref;
+      return ref_result;
     }
   }
 
