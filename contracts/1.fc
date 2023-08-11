@@ -20,24 +20,8 @@ cell preload_ref(slice s) asm "PLDREF";
 tuple empty_tuple() asm "NIL";
 
 
-global int found_cell;
-global int found_root;
-
 ;; testable
 (cell) find_branch_by_hash(int hash, cell tree) method_id {
-  ;; ;; only executed once in the specific golden cell
-  ;; if(hash == tree.cell_hash()){
-  ;;   found_cell = -1; ;; true
-  ;;   if(tree.begin_parse().slice_refs() > 1){
-  ;;     found_root = -1;
-  ;;   } else {
-  ;;     found_root = 0;
-  ;;     ;; found_root = -1; ;; debug
-  ;;   }
-  ;;   return tree;
-  ;; }
-
-
   slice cs = tree.begin_parse();
   int ref_count = cs.slice_refs();
   repeat(ref_count){
@@ -46,9 +30,8 @@ global int found_root;
       return ref;
     }
     cell ref_result = find_branch_by_hash(hash, ref);
-
     if(ref_result.begin_parse().slice_empty?() == 0){ ;; if answer is found in this branch
-      return ref;
+      return ref_result;
     }
   }
   
@@ -135,3 +118,4 @@ global int found_root;
 
 ;; good links for me
 ;; https://docs.ton.org/develop/func/cookbook#how-to-write-a-while-loop
+;; https://docs.ton.org/develop/func/cookbook#how-to-iterate-cell-tree-recursively
