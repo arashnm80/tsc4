@@ -13,42 +13,44 @@
   1923063428480944139667114773918309212080528]
 -}
 
-() recv_internal() {
-}
 
-;; testable
-(tuple) fibonacci_sequence (int n, int k) method_id {
-  int a = 0;
-  int b = 1;
-  tuple result = empty_tuple();
-  int x = 0;
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;accepted answer:
+;; () recv_internal() {
+;; }
 
-  ;; optimization
-  if(k == 0){
-    return result;
-  }
+;; ;; testable
+;; (tuple) fibonacci_sequence (int n, int k) method_id {
+;;   int a = 0;
+;;   int b = 1;
+;;   tuple result = empty_tuple();
+;;   int x = 0;
 
-  int i = 0;
-  while(i < n + k){
-    if(i == 0){
-      x = 0;
-    } else {
-      if(i == 1){
-        x = 1;
-      } else {
-        x = a + b;
-        a = b;
-        b = x;
-      }
-    }
-    if(i >= n){
-      result~tpush(x);
-    }
+;;   ;; optimization
+;;   if(k == 0){
+;;     return result;
+;;   }
 
-    i += 1;
-  }
+;;   int i = 0;
+;;   while(i < n + k){
+;;     if(i == 0){
+;;       x = 0;
+;;     } else {
+;;       if(i == 1){
+;;         x = 1;
+;;       } else {
+;;         x = a + b;
+;;         a = b;
+;;         b = x;
+;;       }
+;;     }
+;;     if(i >= n){
+;;       result~tpush(x);
+;;     }
 
-  return result;
-  ;; return null();
-}
+;;     i += 1;
+;;   }
+
+;;   return result;
+;;   ;; return null();
+;; }
 
