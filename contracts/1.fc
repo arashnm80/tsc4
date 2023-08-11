@@ -8,33 +8,33 @@
 
 
 
-;; third method: final answer
-() recv_internal() {
-}
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; third method: final answer
+;; () recv_internal() {
+;; }
 
-int cell_hash(cell c) asm "HASHCU";
-slice begin_parse(cell c) asm "CTOS";
-int slice_refs(slice s) asm "SREFS";
-(slice, cell) load_ref(slice s) asm( -> 1 0) "LDREF";
-cell preload_ref(slice s) asm "PLDREF";
+;; int cell_hash(cell c) asm "HASHCU";
+;; slice begin_parse(cell c) asm "CTOS";
+;; int slice_refs(slice s) asm "SREFS";
+;; (slice, cell) load_ref(slice s) asm( -> 1 0) "LDREF";
+;; cell preload_ref(slice s) asm "PLDREF";
 
 
-;; testable
-(cell) find_branch_by_hash(int hash, cell tree) method_id {
-  if(tree.cell_hash() == hash){
-    return tree;
-  }
-  slice cs = tree.begin_parse();
-  int ref_count = cs.slice_refs();
-  repeat(ref_count){
-    cell ref = cs~load_ref(); ;; aparrently ~load_ref() works 13/13 but .preload_ref() workes 12/13 !!!!!!!!
-    cell ref_result = find_branch_by_hash(hash, ref);
-    if(ref_result.begin_parse().slice_empty?() == 0){ ;; if answer is found in this branch
-      return ref_result;
-    }
-  }
-  return begin_cell().end_cell(); ;; base condition -> 5 of 13 or passed with this
-}
+;; ;; testable
+;; (cell) find_branch_by_hash(int hash, cell tree) method_id {
+;;   if(tree.cell_hash() == hash){
+;;     return tree;
+;;   }
+;;   slice cs = tree.begin_parse();
+;;   int ref_count = cs.slice_refs();
+;;   repeat(ref_count){
+;;     cell ref = cs~load_ref(); ;; aparrently ~load_ref() works 13/13 but .preload_ref() workes 12/13 !!!!!!!!
+;;     cell ref_result = find_branch_by_hash(hash, ref);
+;;     if(ref_result.begin_parse().slice_empty?() == 0){ ;; if answer is found in this branch
+;;       return ref_result;
+;;     }
+;;   }
+;;   return begin_cell().end_cell(); ;; base condition -> 5 of 13 or passed with this
+;; }
 
 
 
