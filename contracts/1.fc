@@ -27,8 +27,7 @@ global int found_root;
   if(hash == tree.cell_hash()){
     found_cell = -1; ;; true
     if(tree.begin_parse().slice_refs() > 1){
-      ;; found_root = -1;
-      found_root = 0; ;; debug
+      found_root = -1;
     } else {
       found_root = 0;
     }
@@ -42,9 +41,9 @@ global int found_root;
     cell ref = cs~load_ref(); ;; load cell from slice cs
     cell ref_result = find_branch_by_hash(hash, ref);
 
-    ;; if(ref_result.cell_null?() == 0){ ;; old method
     if(ref_result.begin_parse().slice_empty?() == 0){ ;; if answer is found in this branch
       if(found_root){
+        return ref; ;; debug
         return ref_result;
       } else {
         slice ref_cs = ref.begin_parse();
@@ -67,6 +66,9 @@ global int found_root;
 ;;   cell ref = cs~load_ref(); ;; load cell from slice cs
 ;;   find_branch_by_hash(hash, ref);
 ;; }
+
+
+;; if(ref_result.cell_null?() == 0){ ;; old method, apparently wrong
 
 
 ;; good links for me
