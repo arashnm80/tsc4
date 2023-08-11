@@ -13,9 +13,14 @@
   1923063428480944139667114773918309212080528]
 -}
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;work on optimization:
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; more optimization:
+(int) tlen (tuple t) asm "TLEN";
+forall X -> (tuple) to_tuple (X x) asm "NOP";
+
 () recv_internal() {
 }
+
 
 ;; testable
 (tuple) fibonacci_sequence (int n, int k) method_id {
@@ -27,31 +32,20 @@
   tuple result = empty_tuple();
   int a = 0;
   int b = 1;
-  int x = 0;
 
   int i = 0;
   while(i < n + k){
     if(i >= 2){
-      x = a + b;
-      a = b;
-      b = x;
-    } else {
-      x = i;
+      b = a + b;
+      a = b - a;
     }
-
-    ;; if(i == 0){
-    ;;   x = 0;
-    ;; } else {
-    ;;   if(i == 1){
-    ;;     x = 1;
-    ;;   } else {
-    ;;     x = a + b;
-    ;;     a = b;
-    ;;     b = x;
-    ;;   }
-    ;; }
+    
     if(i >= n){
-      result~tpush(x);
+      if(i <= 1){
+        result~tpush(i);
+      } else {
+        result~tpush(b);
+      }
     }
 
     i += 1;
@@ -60,6 +54,45 @@
   return result;
   ;; return null();
 }
+
+
+
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;work on optimization:
+;; () recv_internal() {
+;; }
+
+
+;; ;; testable
+;; (tuple) fibonacci_sequence (int n, int k) method_id {
+;;   ;; optimization
+;;   if(k == 0){
+;;     return empty_tuple();
+;;   }
+  
+;;   tuple result = empty_tuple();
+;;   int a = 0;
+;;   int b = 1;
+;;   int x = 0;
+
+;;   int i = 0;
+;;   while(i < n + k){
+;;     if(i >= 2){
+;;       x = a + b;
+;;       a = b;
+;;       b = x;
+;;     } else {
+;;       x = i;
+;;     }
+;;     if(i >= n){
+;;       result~tpush(x);
+;;     }
+
+;;     i += 1;
+;;   }
+
+;;   return result;
+;;   ;; return null();
+;; }
 
 
 
