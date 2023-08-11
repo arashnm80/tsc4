@@ -25,8 +25,13 @@ tuple empty_tuple() asm "NIL";
 (cell) find_branch_by_hash(int hash, cell tree) method_id {
   slice cs = tree.begin_parse();
   int ref_count = cs.slice_refs();
+  if(ref_count == 0){
+    if(tree.cell_hash() == hash){
+      return tree;
+    }
+  }
   repeat(ref_count){
-    cell ref = cs~load_ref(); ;; load cell from slice cs
+    cell ref = cs~load_ref();
     if(ref.cell_hash() == hash){
       return ref;
     }
@@ -35,9 +40,6 @@ tuple empty_tuple() asm "NIL";
       return ref_result;
     }
   }
-
-  
-
   return begin_cell().end_cell(); ;; base condition -> 5 of 13 or passed with this
 }
 
