@@ -27,7 +27,7 @@
   ai = 0;
   tuple result = empty_tuple();
 
-  while(ai < a){
+  while(ai < aaa){
     ci = 0;
     tuple line = empty_tuple();
 
