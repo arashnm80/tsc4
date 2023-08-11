@@ -23,40 +23,41 @@ global int found_root;
 
 ;; testable
 (cell) find_branch_by_hash(int hash, cell tree) method_id {
-  ;; ;; only executed once in the specific golden cell
-  ;; if(hash == tree.cell_hash()){
-  ;;   found_cell = -1; ;; true
-  ;;   if(tree.begin_parse().slice_refs() > 1){
-  ;;     found_root = -1;
-  ;;   } else {
-  ;;     found_root = 0;
-  ;;   }
-  ;;   return tree;
-  ;; }
+  ;; only executed once in the specific golden cell
+  if(hash == tree.cell_hash()){
+    found_cell = -1; ;; true
+    if(tree.begin_parse().slice_refs() > 1){
+      found_root = -1;
+    } else {
+      found_root = 0;
+    }
+    return tree;
+    return begin_cell().end_cell();
+  }
 
 
+  slice cs = tree.begin_parse();
+  int ref_count = cs.slice_refs();
+  repeat(ref_count){
+    cell ref = cs~load_ref(); ;; load cell from slice cs
+    cell ref_result = find_branch_by_hash(hash, ref);
 
-  ;; slice cs = tree.begin_parse();
-  ;; int ref_count = cs.slice_refs();
-  ;; repeat(ref_count){
-  ;;   cell ref = cs~load_ref(); ;; load cell from slice cs
-  ;;   cell ref_result = find_branch_by_hash(hash, ref);
-
-  ;;   if(ref_result.cell_null?() == 0){ ;; if answer is found in this branch
-  ;;     if(found_root){
-  ;;       return ref_result;
-  ;;     } else {
-  ;;       slice ref_cs = ref.begin_parse();
-  ;;       int ref_ref_count = ref_cs.slice_refs();
-  ;;       if(ref_ref_count > 1){
-  ;;         found_root = -1;
-  ;;       }
-  ;;       return ref;
-  ;;     }
-  ;;   }
-  ;; }
+    if(ref_result.cell_null?() == 0){ ;; if answer is found in this branch
+      if(found_root){
+        return ref_result;
+      } else {
+        slice ref_cs = ref.begin_parse();
+        int ref_ref_count = ref_cs.slice_refs();
+        if(ref_ref_count > 1){
+          found_root = -1;
+        }
+        return ref;
+      }
+    }
+  }
   
-  return begin_cell().end_cell(); ;; base condition
+
+  ;; return begin_cell().end_cell(); ;; base condition -> 5 of 13 or passed with this
 }
 
 
