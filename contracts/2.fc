@@ -25,11 +25,11 @@
   int c = matrixB.at(0).len();
 
   ai = 0;
-  tuple result = [];
+  tuple result = empty_tuple();
 
   while(ai < a){
     ci = 0;
-    tuple line = [];
+    tuple line = empty_tuple();
 
     while(ci < c){
       bi = 0;
