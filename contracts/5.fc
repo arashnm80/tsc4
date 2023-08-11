@@ -18,15 +18,15 @@
 
 ;; testable
 (tuple) fibonacci_sequence (int n, int k) method_id {
-  ;; optimization
-  if(k == 0){
-    return null();
-  }
-
   int a = 0;
   int b = 1;
   tuple result = empty_tuple();
   int x = 0;
+
+  ;; optimization
+  if(k == 0){
+    return result;
+  }
 
   int i = 0;
   while(i < n + k){
