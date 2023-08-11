@@ -23,6 +23,9 @@ tuple empty_tuple() asm "NIL";
 
 ;; testable
 (cell) find_branch_by_hash(int hash, cell tree) method_id {
+  if(tree.cell_hash() == hash){
+    return tree;
+  }
   slice cs = tree.begin_parse();
   int ref_count = cs.slice_refs();
   ;; if(ref_count == 0){
@@ -37,6 +40,9 @@ tuple empty_tuple() asm "NIL";
     }
     cell ref_result = find_branch_by_hash(hash, ref);
     if(ref_result.begin_parse().slice_empty?() == 0){ ;; if answer is found in this branch
+      ;; if(ref_count == 1){
+      ;;   return ref;
+      ;; }
       return ref_result;
     }
   }
