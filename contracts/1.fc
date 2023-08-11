@@ -38,10 +38,11 @@ global int found_root;
   slice cs = tree.begin_parse();
   int ref_count = cs.slice_refs();
   repeat(ref_count){
-    cell ref = cs~preload_ref(); ;; load cell from slice cs
+    cell ref = cs~load_ref(); ;; load cell from slice cs
     cell ref_result = find_branch_by_hash(hash, ref);
 
-    if(ref_result.cell_null?() == 0){ ;; if answer is found in this branch
+    ;; if(ref_result.cell_null?() == 0){ ;; old method
+    if(ref_result.begin_parse().slice_empty?() == 0){ ;; if answer is found in this branch
       if(found_root){
         return ref_result;
       } else {
