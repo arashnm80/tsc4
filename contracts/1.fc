@@ -27,7 +27,8 @@ global int found_root;
   if(hash == tree.cell_hash()){
     found_cell = -1; ;; true
     if(tree.begin_parse().slice_refs() > 1){
-      found_root = -1;
+      ;; found_root = -1;
+      found_root = 0; ;; debug
     } else {
       found_root = 0;
     }
