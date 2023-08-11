@@ -19,15 +19,15 @@
 
 ;; testable
 (tuple) fibonacci_sequence (int n, int k) method_id {
-  int a = 0;
-  int b = 1;
-  tuple result = empty_tuple();
-  int x = 0;
-
   ;; optimization
   if(k == 0){
-    return result;
+    return empty_tuple();
   }
+  
+  tuple result = empty_tuple();
+  int a = 0;
+  int b = 1;
+  int x = 0;
 
   int i = 0;
   while(i < n + k){
@@ -37,9 +37,10 @@
       if(i == 1){
         x = 1;
       } else {
-        x = a + b;
-        a = b;
-        b = x;
+        ;; x = a + b;
+        ;; a = b;
+        ;; b = x;
+        (x, a, b) = (a + b, b, x);
       }
     }
     if(i >= n){
