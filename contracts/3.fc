@@ -15,6 +15,10 @@
   cell ends with ...10100001111, and the second cell starts with 11111000111111...
 
 -}
+;; target      startWith         endWith
+;; 101110101   10101000111111    10100001011
+;; 111111111   11111000111111    10100001111
+;;
 
 () recv_internal() {
 }
