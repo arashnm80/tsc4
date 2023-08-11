@@ -19,7 +19,7 @@
   int bi = 0;
   int ci = 0;
   int temp = 0;
-  tuple test = matrixA;
+  tuple test = force_cast_to_tuple(matrixA);
   var mmmm = test.tuple_length(); ;; to-do: repeat iteration 
   ;; A: a * b    B: b * c
   ;; UInt a = matrixA.tuple_length();
