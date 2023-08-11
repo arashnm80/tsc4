@@ -24,12 +24,9 @@ int slice_refs(slice s) asm "SREFS";
     return tree;
   }
   slice cs = tree.begin_parse();
-  int ref_count = cs.slice_refs();
-  repeat(ref_count){
+  ;; int ref_count = cs.slice_refs();
+  repeat(cs.slice_refs()){
     cell ref = cs~load_ref();
-    ;; if(ref.cell_hash() == hash){
-    ;;   return ref;
-    ;; }
     cell ref_result = find_branch_by_hash(hash, ref);
     if(ref_result.begin_parse().slice_empty?() == 0){ ;; if answer is found in this branch
       return ref_result;
