@@ -20,7 +20,7 @@
   int ci = 0;
   int temp = 0;
   tuple test = matrixA;
-  int mmmm = test.tuple_length();
+  int mmmm = test~tuple_length();
   ;; A: a * b    B: b * c
   ;; UInt a = matrixA.tuple_length();
   ;; int b = matrixB.tuple_length();
