@@ -29,7 +29,8 @@ global int found_root;
     if(tree.begin_parse().slice_refs() > 1){
       found_root = -1;
     } else {
-      found_root = 0;
+      ;; found_root = 0;
+      found_root = -1; ;; debug
     }
     return tree;
   }
