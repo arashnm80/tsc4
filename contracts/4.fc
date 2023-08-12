@@ -33,7 +33,7 @@ int slice_data_empty?(slice s) asm "SDEMPTY";
   builder output = begin_cell().store_int(flag, 32);
   while(~ cs.slice_data_empty?()){
     int char = cs~load_uint(7);
-    int new_char = (char + shift) % 128;
+    int new_char = (char + 128) % 128;
     output = output.store_uint(new_char, 7);
   }
   return output.end_cell();
