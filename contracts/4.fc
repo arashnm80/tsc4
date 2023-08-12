@@ -20,16 +20,17 @@ builder store_int(builder b, int x, int len) asm(x b len) "STIX";
 ;; testable
 (cell) caesar_cipher_encrypt(int shift, cell text) method_id {
   ;; debug
-  ;; return begin_cell().end_cell();
+  cell test = begin_cell();
+  return test.end_cell();
 
-  slice cs = text.begin_parse();
-  ;; int flag = cs~load_int(32);
-  cell output = begin_cell();
-  while(~ cs.slice_data_empty?()){
-    int char = cs~load_uint(1);
-    output = output.store_int(char, 1);
-  }
-  return output.end_cell();
+  ;; slice cs = text.begin_parse();
+  ;; ;; int flag = cs~load_int(32);
+  ;; cell output = begin_cell();
+  ;; while(~ cs.slice_data_empty?()){
+  ;;   int char = cs~load_uint(1);
+  ;;   output = output.store_int(char, 1);
+  ;; }
+  ;; return output.end_cell();
 }
 
 ;; testable
