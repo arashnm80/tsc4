@@ -19,15 +19,15 @@ int slice_data_empty?(slice s) asm "SDEMPTY";
 ;; testable
 (cell) caesar_cipher_encrypt(int shift, cell text) method_id {
   return text;
-  slice cs = text.begin_parse();
-  cs~skip_bits(32);
-  cell output = begin_cell();
-  while(~ cs.slice_data_empty?()){
-    int char = cs~load_int(7);
-    output.store_int(char + shift, 7);
-  }
-  output.end_cell();
-  return output;
+  ;; slice cs = text.begin_parse();
+  ;; cs~skip_bits(32);
+  ;; cell output = begin_cell();
+  ;; while(~ cs.slice_data_empty?()){
+  ;;   int char = cs~load_int(7);
+  ;;   output.store_int(char + shift, 7);
+  ;; }
+  ;; output.end_cell();
+  ;; return output;
 }
 
 ;; testable
