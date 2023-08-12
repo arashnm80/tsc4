@@ -13,6 +13,7 @@
 slice skip_bits(slice s, int len) asm "SDSKIPFIRST";
 (slice, ()) ~skip_bits(slice s, int len) asm "SDSKIPFIRST";
 int slice_data_empty?(slice s) asm "SDEMPTY";
+builder store_int(builder b, int x, int len) asm(x b len) "STIX";
 (slice, int) ~load_int(slice s, int len) asm(s len -> 1 0) "LDIX";
 (slice, int) ~load_uint(slice s, int len) asm( -> 1 0) "LDUX";
 
@@ -25,8 +26,8 @@ int slice_data_empty?(slice s) asm "SDEMPTY";
   ;; int flag = cs~load_int(32);
   cell output = begin_cell();
   while(~ cs.slice_data_empty?()){
-    int char = cs~load_int(1);
-    output~store_int(char, 1);
+    int char = cs~load_uint(1);
+    output = output.store_int(char, 1);
   }
   return output.end_cell();
 }
