@@ -14,7 +14,7 @@ slice skip_bits(slice s, int len) asm "SDSKIPFIRST";
 (slice, ()) ~skip_bits(slice s, int len) asm "SDSKIPFIRST";
 int slice_data_empty?(slice s) asm "SDEMPTY";
 (slice, int) ~load_int(slice s, int len) asm(s len -> 1 0) "LDIX";
-;; (slice, int) ~load_uint(slice s, int len) asm( -> 1 0) "LDUX";
+(slice, int) ~load_uint(slice s, int len) asm( -> 1 0) "LDUX";
 
 ;; testable
 (cell) caesar_cipher_encrypt(int shift, cell text) method_id {
