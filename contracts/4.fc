@@ -9,7 +9,7 @@
 () recv_internal() {
 }
 
-;; (slice, slice) load_bits(slice s, int len) asm(s len -> 1 0) "LDSLICEX";
+;; (slice, slice) load_bits(slice s, int len) asm(s len -> 1 0) "LDSLICEX"; ;; this line causes error
 slice skip_bits(slice s, int len) asm "SDSKIPFIRST";
 (slice, ()) ~skip_bits(slice s, int len) asm "SDSKIPFIRST";
 int slice_data_empty?(slice s) asm "SDEMPTY";
@@ -19,17 +19,17 @@ int slice_data_empty?(slice s) asm "SDEMPTY";
 ;; testable
 (cell) caesar_cipher_encrypt(int shift, cell text) method_id {
   ;; debug
-  return begin_cell().end_cell();
+  ;; return begin_cell().end_cell();
 
-  ;; cell output = begin_cell();
-  ;; ;; slice cs = text.begin_parse();
-  ;; ;; cs~skip_bits(32);
-  ;; ;; while(~ cs.slice_data_empty?()){
-  ;; ;;   int char = cs~load_int(7);
-  ;; ;;   output.store_int(char + shift, 7);
-  ;; ;; }
-  ;; output = output.end_cell();
-  ;; return output;
+  cell output = begin_cell();
+  slice cs = text.begin_parse();
+  cs~skip_bits(32);
+  while(~ cs.slice_data_empty?()){
+    int char = cs~load_int(7);
+    output.store_int(char + shift, 7);
+  }
+  output.end_cell();
+  return output;
 }
 
 ;; testable
