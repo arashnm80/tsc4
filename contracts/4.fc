@@ -19,7 +19,7 @@ int slice_data_empty?(slice s) asm "SDEMPTY";
 int slice_bits(slice s) asm "SBITS";
 int slice_refs(slice s) asm "SREFS";
 
-global int first_cell;
+;; global int first_cell;
 
 ;; testable
 (cell) caesar_cipher_encrypt(int shift, cell text) method_id {
