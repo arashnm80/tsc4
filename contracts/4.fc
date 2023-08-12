@@ -9,13 +9,42 @@
 () recv_internal() {
 }
 
+(slice, slice) load_bits(slice s, int len) asm(s len -> 1 0) "LDSLICEX";
+slice skip_bits(slice s, int len) asm "SDSKIPFIRST";
+;; (slice, ()) ~skip_bits(slice s, int len) asm "SDSKIPFIRST";
+int slice_data_empty?(slice s) asm "SDEMPTY";
+(slice, int) ~load_uint(slice s, int len) asm( -> 1 0) "LDUX";
+
 ;; testable
 (cell) caesar_cipher_encrypt(int shift, cell text) method_id {
-  return begin_cell().end_cell();
+  slice cs = text.begin_parse()
+                 .skip_bits(32);
+  ;; int prefix_flag = cs.load_int(32);
+  ;; slice result = "";
+  cell output = begin_cell()
+  while(~ cs.slice_data_empty?()){
+    int char = cs~load_uint(7);
+    output.store_uint(char + shift, 7);
+  }
+  output.end_cell();
+  return output;
 }
 
 ;; testable
 (cell) caesar_cipher_decrypt(int shift, cell text) method_id {
-  return begin_cell().end_cell();
+  slice cs = text.begin_parse()
+                 .skip_bits(32);
+  ;; int prefix_flag = cs.load_int(32);
+  ;; slice result = "";
+  cell output = begin_cell()
+  while(~ cs.slice_data_empty?()){
+    int char = cs~load_uint(7);
+    output.store_uint(char - shift, 7);
+  }
+  output.end_cell();
+  return output;
 }
 
+
+;; useful links:
+;; https://docs.ton.org/develop/func/literals_identifiers#string-literals

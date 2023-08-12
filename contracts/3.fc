@@ -15,16 +15,37 @@
   cell ends with ...10100001111, and the second cell starts with 11111000111111...
 
 -}
-;; target      startWith         endWith
-;; 101110101   10101000111111    10100001011
-;; 111111111   11111000111111    10100001111
+;; target          endWith    startWith         
+;; 101110101       1010000101110101000111111
+;; 111111111       1010000111111111000111111
 ;;
 
 () recv_internal() {
 }
 
+(int) tlen(tuple t) asm "TLEN";
+slice begin_parse(cell c) asm "CTOS";
+int slice_refs(slice s) asm "SREFS";
+(slice, cell) load_ref(slice s) asm( -> 1 0) "LDREF";
+
+
 ;; testable
 (cell) find_and_replace(int flag, int value, cell linked_list) method_id {
+  tuple tp = empty_tuple();
+  cell cl = linked_list;
+  int run_loop = -1;
+  while(run_loop){
+    slice cs = cl.begin_parse();
+    int data = cs~load_uint(128);
+    tp.tpush(data);
+
+
+    if(cs.slice_refs() == 1){
+      cl = cl~load_ref();
+    } else {
+      run_loop = 0;
+    }
+  }
   return begin_cell().end_cell();
 }
 
