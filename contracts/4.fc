@@ -20,8 +20,8 @@ builder store_int(builder b, int x, int len) asm(x b len) "STIX";
 ;; testable
 (cell) caesar_cipher_encrypt(int shift, cell text) method_id {
   ;; debug
-  cell test = begin_cell();
-  return test.end_cell();
+  cell test = begin_cell().end_cell();
+  return test;
 
   ;; slice cs = text.begin_parse();
   ;; ;; int flag = cs~load_int(32);
