@@ -38,11 +38,11 @@ int slice_bits(slice s) asm "SBITS";
   ;; }
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug end
   builder output = begin_cell().store_int(flag, 32);
-  ;; while(~ cs.slice_data_empty?()){
-  repeat(cs.slice_bits() % 8){
-    int char = cs~load_int(8);
+  while(~ cs.slice_data_empty?()){
+  ;; repeat(cs.slice_bits() % 8){
+    int char = cs~load_uint(8);
     int new_char = char; ;; % 128;
-    output~store_int(new_char, 8);
+    output~store_uint(new_char, 8);
   }
   return output.end_cell();
 }
