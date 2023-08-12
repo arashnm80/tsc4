@@ -23,43 +23,44 @@ int slice_data_empty?(slice s) asm "SDEMPTY";
 
 ;; testable
 (cell) caesar_cipher_encrypt(int shift, cell text) method_id {
-  slice cs = text.begin_parse();
+  return text;
+  ;; slice cs = text.begin_parse();
 
-  ;; slice cs_copy = cs;
-  int flag = cs~load_int(32);
-  if(flag == 0){
-    builder output = begin_cell().store_int(flag, 32);
-  } else {
-    ;; builder output = begin_cell();
-    ;; cs = cs_copy;
-  }
+  ;; ;; slice cs_copy = cs;
+  ;; int flag = cs~load_int(32);
+  ;; if(flag == 0){
+  ;;   builder output = begin_cell().store_int(flag, 32);
+  ;; } else {
+  ;;   ;; builder output = begin_cell();
+  ;;   ;; cs = cs_copy;
+  ;; }
   
-  ;; int ref_count = cs.slice_refs();
-  ;; if(ref_count > 0){
-  ;;   cell ref = cs~load_ref();
-  ;;   cell ref_ceasar = caesar_cipher_encrypt(shift, ref);
-  ;;   output.store_ref(ref_ceasar);
-  ;; }
+  ;; ;; int ref_count = cs.slice_refs();
+  ;; ;; if(ref_count > 0){
+  ;; ;;   cell ref = cs~load_ref();
+  ;; ;;   cell ref_ceasar = caesar_cipher_encrypt(shift, ref);
+  ;; ;;   output.store_ref(ref_ceasar);
+  ;; ;; }
 
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug begin
-  ;; if(cs.slice_bits() % 8 == 0){
-  ;;   return begin_cell().store_int(flag, 32).store_slice(cs).end_cell();
+  ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug begin
+  ;; ;; if(cs.slice_bits() % 8 == 0){
+  ;; ;;   return begin_cell().store_int(flag, 32).store_slice(cs).end_cell();
+  ;; ;; }
+  ;; ;; int debug = -1;
+  ;; ;; if(debug){
+  ;; ;;   ;; return begin_cell().store_int(flag, 32).store_slice(cs).end_cell();
+  ;; ;;   if(new_char == char){
+  ;; ;;     return text;
+  ;; ;;   }
+  ;; ;; }
+  ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug end
+  ;; while(~ cs.slice_data_empty?()){
+  ;; ;; repeat(cs.slice_bits() % 8){
+  ;;   int char = cs~load_uint(8);
+  ;;   int new_char = (char + shift) % 256;
+  ;;   output.store_uint(new_char, 8);
   ;; }
-  ;; int debug = -1;
-  ;; if(debug){
-  ;;   ;; return begin_cell().store_int(flag, 32).store_slice(cs).end_cell();
-  ;;   if(new_char == char){
-  ;;     return text;
-  ;;   }
-  ;; }
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug end
-  while(~ cs.slice_data_empty?()){
-  ;; repeat(cs.slice_bits() % 8){
-    int char = cs~load_uint(8);
-    int new_char = (char + shift) % 256;
-    output.store_uint(new_char, 8);
-  }
-  return output.end_cell();
+  ;; return output.end_cell();
 }
 
 ;; testable
