@@ -26,9 +26,9 @@ int slice_bits(slice s) asm "SBITS";
   slice cs = text.begin_parse();
   int flag = cs~load_int(32);
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug begin
-  if(cs.slice_bits() % 8 == 0){
-    return begin_cell().store_int(flag, 32).store_slice(cs).end_cell();
-  }
+  ;; if(cs.slice_bits() % 8 == 0){
+  ;;   return begin_cell().store_int(flag, 32).store_slice(cs).end_cell();
+  ;; }
   ;; int debug = -1;
   ;; if(debug){
   ;;   ;; return begin_cell().store_int(flag, 32).store_slice(cs).end_cell();
@@ -39,9 +39,9 @@ int slice_bits(slice s) asm "SBITS";
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug end
   builder output = begin_cell().store_int(flag, 32);
   while(~ cs.slice_data_empty?()){
-    int char = cs~load_uint(7);
-    int new_char = (char + 128) % 128;
-    output = output.store_uint(new_char, 7);
+    int char = cs~load_uint(8);
+    int new_char = (char + 0) ;; % 128;
+    output = output.store_uint(new_char, 8);
   }
   return output.end_cell();
 }
