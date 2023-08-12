@@ -25,7 +25,7 @@ int slice_refs(slice s) asm "SREFS";
 (cell) caesar_cipher_encrypt(int shift, cell text) method_id {
   slice cs = text.begin_parse();
 
-  slice cs_copy = cs;
+  ;; slice cs_copy = cs;
   int flag = cs~load_int(32);
   if(flag == 0){
     builder output = begin_cell().store_int(flag, 32);
