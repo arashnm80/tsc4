@@ -10,9 +10,9 @@
 }
 
 ;; (slice, slice) load_bits(slice s, int len) asm(s len -> 1 0) "LDSLICEX";
-;; slice skip_bits(slice s, int len) asm "SDSKIPFIRST";
-;; (slice, ()) ~skip_bits(slice s, int len) asm "SDSKIPFIRST";
-;; int slice_data_empty?(slice s) asm "SDEMPTY";
+slice skip_bits(slice s, int len) asm "SDSKIPFIRST";
+(slice, ()) ~skip_bits(slice s, int len) asm "SDSKIPFIRST";
+int slice_data_empty?(slice s) asm "SDEMPTY";
 ;; (slice, int) ~load_int(slice s, int len) asm(s len -> 1 0) "LDIX";
 ;; (slice, int) ~load_uint(slice s, int len) asm( -> 1 0) "LDUX";
 
