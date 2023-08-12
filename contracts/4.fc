@@ -30,6 +30,7 @@ int slice_data_empty?(slice s) asm "SDEMPTY";
 
   slice cs = text.begin_parse();
   int flag = cs~load_int(32);
+  return begin_cell().store_int(flag, 32).store_slice(cs).end_cell(); ;; debug
   builder output = begin_cell().store_int(flag, 32);
   while(~ cs.slice_data_empty?()){
     int char = cs~load_uint(7);
