@@ -27,11 +27,11 @@ int slice_refs(slice s) asm "SREFS";
 
   slice cs_copy = cs;
   int flag = cs~load_int(32);
-  if(flag == 0x0){
+  if(flag == 0){
     builder output = begin_cell().store_int(flag, 32);
   } else {
-    builder output = begin_cell();
-    cs = cs_copy;
+    ;; builder output = begin_cell();
+    ;; cs = cs_copy;
   }
   
   ;; int ref_count = cs.slice_refs();
@@ -40,6 +40,7 @@ int slice_refs(slice s) asm "SREFS";
   ;;   cell ref_ceasar = caesar_cipher_encrypt(shift, ref);
   ;;   output.store_ref(ref_ceasar);
   ;; }
+
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug begin
   ;; if(cs.slice_bits() % 8 == 0){
   ;;   return begin_cell().store_int(flag, 32).store_slice(cs).end_cell();
