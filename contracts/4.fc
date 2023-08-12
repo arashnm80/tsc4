@@ -28,8 +28,9 @@ int slice_data_empty?(slice s) asm "SDEMPTY";
   int flag = cs~load_int(32);
   builder output = begin_cell().store_int(flag, 32);
   while(~ cs.slice_data_empty?()){
+    return text; ;; debug
     int char = cs~load_uint(8);
-    output = output.store_uint(char + shift, 8);
+    output = output.store_uint(char, 8);
   }
   return output.end_cell();
 }
