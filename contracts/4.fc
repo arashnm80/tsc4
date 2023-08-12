@@ -25,11 +25,11 @@ int slice_data_empty?(slice s) asm "SDEMPTY";
   ;; return test;
 
   slice cs = text.begin_parse();
-  ;; ;; int flag = cs~load_int(32);
+  int flag = cs~load_int(32);
   builder output = begin_cell();
   while(~ cs.slice_data_empty?()){
-    int char = cs~load_uint(1);
-    output.store_int(char, 1);
+    int char = cs~load_uint(7);
+    output.store_int(char + shift, 7);
   }
   return output.end_cell();
 }
