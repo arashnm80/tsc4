@@ -21,7 +21,7 @@ int slice_data_empty?(slice s) asm "SDEMPTY";
                  .skip_bits(32);
   ;; int prefix_flag = cs.load_int(32);
   ;; slice result = "";
-  cell output = begin_cell()
+  cell output = begin_cell();
   while(~ cs.slice_data_empty?()){
     int char = cs~load_uint(7);
     output.store_uint(char + shift, 7);
@@ -36,7 +36,7 @@ int slice_data_empty?(slice s) asm "SDEMPTY";
                  .skip_bits(32);
   ;; int prefix_flag = cs.load_int(32);
   ;; slice result = "";
-  cell output = begin_cell()
+  cell output = begin_cell();
   while(~ cs.slice_data_empty?()){
     int char = cs~load_uint(7);
     output.store_uint(char - shift, 7);
