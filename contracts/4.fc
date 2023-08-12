@@ -19,10 +19,14 @@ int slice_data_empty?(slice s) asm "SDEMPTY";
 
 ;; testable
 (cell) caesar_cipher_encrypt(int shift, cell text) method_id {
-
   ;; debug
   ;; cell test = begin_cell().store_slice(cs).end_cell();
   ;; return test;
+  int a = 13;
+  if(a % 10 == 3){
+    return text;
+  }
+
 
   slice cs = text.begin_parse();
   int flag = cs~load_int(32);
