@@ -21,7 +21,7 @@ int slice_data_empty?(slice s) asm "SDEMPTY";
 (cell) caesar_cipher_encrypt(int shift, cell text) method_id {
   return text;
   ;; debug
-  cell test = begin_cell().end_cell();
+  cell test = begin_cell().store_slice(null()).end_cell();
   return test;
 
   ;; slice cs = text.begin_parse();
