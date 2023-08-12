@@ -33,7 +33,7 @@
 ;; testable
 (cell) caesar_cipher_decrypt(int shift, cell text) method_id {
   int reverse_shift = - shift;
-  return caesar_cipher_encrypt(int reverse_shift, cell text);
+  return caesar_cipher_encrypt(reverse_shift, text);
 }
 
 
