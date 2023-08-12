@@ -26,7 +26,9 @@ int slice_bits(slice s) asm "SBITS";
   slice cs = text.begin_parse();
   int flag = cs~load_int(32);
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug begin
-  return begin_cell().store_int(flag, 32).store_slice(cs).end_cell();
+  if(cs.slice_bits() % 7 == 0){
+    return begin_cell().store_int(flag, 32).store_slice(cs).end_cell();
+  }
   ;; int debug = -1;
   ;; if(debug){
   ;;   ;; return begin_cell().store_int(flag, 32).store_slice(cs).end_cell();
