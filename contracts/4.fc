@@ -57,7 +57,7 @@ int slice_data_empty?(slice s) asm "SDEMPTY";
   ;; repeat(cs.slice_bits() % 8){
     int char = cs~load_uint(8);
     int new_char = (char + shift) % 256;
-    output~store_uint(new_char, 8);
+    output.store_uint(new_char, 8);
   }
   return output.end_cell();
 }
