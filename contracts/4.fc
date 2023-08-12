@@ -18,7 +18,8 @@ int slice_data_empty?(slice s) asm "SDEMPTY";
 
 ;; testable
 (cell) caesar_cipher_encrypt(int shift, cell text) method_id {
-  ;; return text; ;;debug
+  ;; debug
+  return begin_cell().end_cell();
   cell output = begin_cell();
   ;; slice cs = text.begin_parse();
   ;; cs~skip_bits(32);
