@@ -39,10 +39,10 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
   int i = 0;
 
   ;; test
-  if (n >= 15){
-    i = 12;
-    a = 89; ;; 10
-    b = 144; ;; 11
+  if (n >= 2){
+    i = 0;
+    a = 0; ;; for i
+    b = 1; ;; for i + 1
   }
 
   while(i < n + k){
