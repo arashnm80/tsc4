@@ -27,8 +27,7 @@ global int first_cell;
   builder output = begin_cell();
 
   int flag = 0; ;; throws error if not initialized wtih value
-  if(first_cell != 555555555){
-    first_cell = 555555555;
+  if(first_cell == null()){
     flag = cs~load_uint(32);
     output.store_uint(flag, 32);
   }
