@@ -26,7 +26,7 @@ global int first_cell;
   slice cs = text.begin_parse();
   builder output = begin_cell();
 
-  int flag;
+  int flag = 0;
   ;; if(first_cell != 555555555){
   ;;   flag = cs~load_uint(32);
   ;;   output.store_uint(flag, 32);
