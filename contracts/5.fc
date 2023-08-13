@@ -40,9 +40,9 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 
   ;; test
   if (n >= 15){
-    i = 10;
-    a = 89;
-    b = 144;
+    i = 12;
+    a = 89; ;; 10
+    b = 144; ;; 11
   }
 
   while(i < n + k){
