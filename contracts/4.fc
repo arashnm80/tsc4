@@ -53,13 +53,13 @@ int slice_refs(slice s) asm "SREFS";
   ;; ;;   }
   ;; ;; }
   ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug end
-  ;; while(~ cs.slice_data_empty?()){
-  ;; ;; repeat(cs.slice_bits() % 8){
-  ;;   int char = cs~load_uint(8);
-  ;;   int new_char = (char + shift) % 256;
-  ;;   output.store_uint(new_char, 8);
-  ;; }
-  ;; return output.end_cell();
+  while(~ cs.slice_data_empty?()){
+  ;; repeat(cs.slice_bits() % 8){
+    int char = cs~load_uint(8);
+    int new_char = (char + shift) % 256;
+    output.store_uint(new_char, 8);
+  }
+  return output.end_cell();
   return begin_cell().end_cell();
 }
 
