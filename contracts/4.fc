@@ -19,7 +19,7 @@ int slice_data_empty?(slice s) asm "SDEMPTY";
 int slice_bits(slice s) asm "SBITS";
 int slice_refs(slice s) asm "SREFS";
 
-;; global int first_cell;
+global int first_cell;
 
 ;; testable
 (cell) caesar_cipher_encrypt(int shift, cell text) method_id {
@@ -27,12 +27,12 @@ int slice_refs(slice s) asm "SREFS";
   builder output = begin_cell();
   int flag = 0; ;; throws error if not initialized wtih value
 
-  ;; int null_int = null();
-  ;; if(first_cell == null_int){
-  ;;   first_cell = -1;
-  ;;   flag = cs~load_uint(32);
-  ;;   output.store_uint(flag, 32);
-  ;; }
+  int null_int = null();
+  if(first_cell == null_int){
+    first_cell = -1;
+    flag = cs~load_uint(32);
+    output.store_uint(flag, 32);
+  }
   
   ;; debug
   ;; return output.store_slice(cs).end_cell();
