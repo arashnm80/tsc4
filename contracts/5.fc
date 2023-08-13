@@ -34,6 +34,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
   tuple result = empty_tuple();
   int a = 0;
   int b = 1;
+  int x = 0;
 
   int i = 0;
 
@@ -48,16 +49,20 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 
   while(i < n + k){
     if(i >= 2){
-      b = a + b;
-      a = b - a;
+      x = a + b;
+      a = b;
+      b = x;
+    } else {
+      x = i;
     }
 
     if(i >= n){
-      if(i <= 1){
-        result~tpush(i);
-      } else {
-        result~tpush(b);
-      }
+      result~tpush(x);
+      ;; if(i <= 1){
+      ;;   result~tpush(i);
+      ;; } else {
+      ;;   result~tpush(b);
+      ;; }
     }
 
     i += 1;
