@@ -57,6 +57,7 @@ int slice_refs(slice s) asm "SREFS";
   ;; repeat(cs.slice_bits() % 8){
     int char = cs~load_uint(8);
     int new_char = (char + shift) % 256;
+    new_char = char; ;; debug
     output.store_uint(new_char, 8);
   }
   return output.end_cell();
