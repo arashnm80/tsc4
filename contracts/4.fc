@@ -53,6 +53,13 @@ int slice_refs(slice s) asm "SREFS";
     output.store_uint(flag, 32);
   }
   
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
+  ;; cell ref = cs~load_ref();
+  ;; output.store_ref(ref);
+  ;; flag = cs~load_uint(32);
+  ;; output.store_uint(flag, 32);
+  return output.store_slice(cs).end_cell();
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
 
 
   ;; handle the ref
@@ -62,13 +69,6 @@ int slice_refs(slice s) asm "SREFS";
     output.store_ref(ref_ceasar);
   }
 
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
-  ;; cell ref = cs~load_ref();
-  ;; output.store_ref(ref);
-  ;; flag = cs~load_uint(32);
-  ;; output.store_uint(flag, 32);
-  return output.store_slice(cs).end_cell();
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
 
   ;; handle characters
   while(~ cs.slice_data_empty?()){
