@@ -14,48 +14,56 @@
 -}
 
 
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; more optimization:
-;; ;;; aparently removing x wasn't good
-;; ;;; make it better later with every 50 number idea
-;; (int) tlen (tuple t) asm "TLEN";
-;; forall X -> (tuple) to_tuple (X x) asm "NOP";
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; more optimization:
+;;; aparently removing x wasn't good
+;;; make it better later with every 50 number idea
+(int) tlen (tuple t) asm "TLEN";
+forall X -> (tuple) to_tuple (X x) asm "NOP";
 
-;; () recv_internal() {
-;; }
+() recv_internal() {
+}
 
 
-;; ;; testable
-;; (tuple) fibonacci_sequence (int n, int k) method_id {
-;;   ;; optimization
-;;   if(k == 0){
-;;     return empty_tuple();
-;;   }
+;; testable
+(tuple) fibonacci_sequence (int n, int k) method_id {
+  ;; optimization
+  if(k == 0){
+    return empty_tuple();
+  }
   
-;;   tuple result = empty_tuple();
-;;   int a = 0;
-;;   int b = 1;
+  tuple result = empty_tuple();
+  int a = 0;
+  int b = 1;
 
-;;   int i = 0;
-;;   while(i < n + k){
-;;     if(i >= 2){
-;;       b = a + b;
-;;       a = b - a;
-;;     }
+  int i = 0;
 
-;;     if(i >= n){
-;;       if(i <= 1){
-;;         result~tpush(i);
-;;       } else {
-;;         result~tpush(b);
-;;       }
-;;     }
+  ;; test
+  if (n >= 100){
+    i = 100;
+    a = 573147844013817084101;
+    b = 927372692193078999176;
+  }
 
-;;     i += 1;
-;;   }
+  while(i < n + k){
+    if(i >= 2){
+      b = a + b;
+      a = b - a;
+    }
 
-;;   return result;
-;;   ;; return null();
-;; }
+    if(i >= n){
+      if(i <= 1){
+        result~tpush(i);
+      } else {
+        result~tpush(b);
+      }
+    }
+
+    i += 1;
+  }
+
+  return result;
+  ;; return null();
+}
 
 
 
