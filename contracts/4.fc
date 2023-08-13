@@ -38,8 +38,8 @@ global int first_cell;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
 
   ;; handle the flag
-  int null_int = null();
-  if(first_cell == null_int){
+  ;; int null_int = null();
+  if(first_cell != -1){
     return text; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; short debug
     first_cell = -1;
     flag = cs~load_uint(32);
