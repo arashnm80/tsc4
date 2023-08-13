@@ -20,10 +20,22 @@ int slice_bits(slice s) asm "SBITS";
 int slice_refs(slice s) asm "SREFS";
 (int, int) slice_bits_refs(slice s) asm "SBITREFS";
 
-global int first_cell;
+;; global int first_cell;
 
 ;; testable
 (cell) caesar_cipher_encrypt(int shift, cell text) method_id {
+  return caesar_helper(shift, text, -1);
+}
+
+;; testable
+(cell) caesar_cipher_decrypt(int shift, cell text) method_id {
+  int reverse_shift = - shift;
+  return caesar_cipher_encrypt(reverse_shift, text);
+}
+
+
+;; added has_flag parameter
+(cell) caesar_helper(int shift, cell text, int has_flag) method_id {
   slice cs = text.begin_parse();
   builder output = begin_cell();
   int flag = 0; ;; throws error if not initialized wtih value
@@ -38,10 +50,9 @@ global int first_cell;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
 
   ;; handle the flag
-  ;; int null_int = null();
-  if(first_cell != -1){
+  if(has_flag){
     return text; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; short debug
-    first_cell = -1;
+    has_flag = 0;
     flag = cs~load_uint(32);
     output.store_uint(flag, 32);
   }
@@ -55,7 +66,7 @@ global int first_cell;
     cell ref = cs~load_ref();
     if(first_ref){
       first_ref = 0;
-      cell ref_ceasar = caesar_cipher_encrypt(shift, ref);
+      cell ref_ceasar = caesar_helper(shift, ref, has_flag);
       output.store_ref(ref_ceasar);
     } else {
       output.store_ref(ref);
@@ -87,13 +98,6 @@ global int first_cell;
   }
   return output.end_cell();
 }
-
-;; testable
-(cell) caesar_cipher_decrypt(int shift, cell text) method_id {
-  int reverse_shift = - shift;
-  return caesar_cipher_encrypt(reverse_shift, text);
-}
-
 
 ;; useful links:
 ;; https://docs.ton.org/develop/func/literals_identifiers#string-literals
