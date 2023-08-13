@@ -54,18 +54,18 @@ int slice_refs(slice s) asm "SREFS";
 
     ;; calculate new character
     int new_chr = chr;
-    ;; ;; Encrypt uppercase characters
-    ;; if (chr >= 65){
-    ;;   if(chr <= 90){
-    ;;     new_chr += ((chr + shift - 65) % 26) + 65;
-    ;;   }
-    ;; }
-    ;; ;; Encrypt lowercase characters
-    ;; if(chr >= 97){
-    ;;   if(chr <= 122){
-    ;;     result += ((chr + shift - 97) % 26) + 97;
-    ;;   }
-    ;; }
+    ;; Encrypt uppercase characters
+    if (chr >= 65){
+      if(chr <= 90){
+        new_chr = ((chr + shift - 65) % 26) + 65;
+      }
+    }
+    ;; Encrypt lowercase characters
+    if(chr >= 97){
+      if(chr <= 122){
+        new_chr = ((chr + shift - 97) % 26) + 97;
+      }
+    }
 
     output.store_uint(new_chr, 8);
   }
