@@ -23,7 +23,6 @@ int slice_data_empty?(slice s) asm "SDEMPTY";
 
 ;; testable
 (cell) caesar_cipher_encrypt(int shift, cell text) method_id {
-  ;; return text;
   slice cs = text.begin_parse();
 
   slice cs_copy = cs;
@@ -31,8 +30,8 @@ int slice_data_empty?(slice s) asm "SDEMPTY";
   if(flag == 0){
     builder output = begin_cell().store_int(flag, 32);
   } else {
-    ;; builder output = begin_cell();
-    ;; cs = cs_copy;
+    builder output = begin_cell();
+    cs = cs_copy;
   }
   
   ;; ;; int ref_count = cs.slice_refs();
@@ -74,3 +73,5 @@ int slice_data_empty?(slice s) asm "SDEMPTY";
 ;; useful links:
 ;; https://docs.ton.org/develop/func/literals_identifiers#string-literals
 ;; https://docs.ton.org/develop/func/statements#operators
+;; https://docs.ton.org/develop/smart-contracts/fees#how-to-calculate-fees
+;; https://docs.ton.org/develop/howto/fees-low-level#computation-fees
