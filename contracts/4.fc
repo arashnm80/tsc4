@@ -61,6 +61,7 @@ int slice_data_empty?(slice s) asm "SDEMPTY";
   ;;   output.store_uint(new_char, 8);
   ;; }
   ;; return output.end_cell();
+  return begin_cell().end_cell();
 }
 
 ;; testable
