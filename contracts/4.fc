@@ -28,6 +28,7 @@ global int first_cell;
 
   int flag = 0; ;; throws error if not initialized wtih value
   if(first_cell == null()){
+    first_cell = -1;
     flag = cs~load_uint(32);
     output.store_uint(flag, 32);
   }
