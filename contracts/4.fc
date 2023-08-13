@@ -27,13 +27,13 @@ int slice_data_empty?(slice s) asm "SDEMPTY";
   slice cs = text.begin_parse();
 
   slice cs_copy = cs;
-  ;; int flag = cs~load_int(32);
-  ;; if(flag == 0){
-  ;;   builder output = begin_cell().store_int(flag, 32);
-  ;; } else {
-  ;;   ;; builder output = begin_cell();
-  ;;   ;; cs = cs_copy;
-  ;; }
+  int flag = cs~load_int(32);
+  if(flag == 0){
+    builder output = begin_cell().store_int(flag, 32);
+  } else {
+    ;; builder output = begin_cell();
+    ;; cs = cs_copy;
+  }
   
   ;; ;; int ref_count = cs.slice_refs();
   ;; ;; if(ref_count > 0){
