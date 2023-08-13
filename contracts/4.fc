@@ -58,7 +58,7 @@ int slice_refs(slice s) asm "SREFS";
   ;; handle the ref
   if(cs.slice_refs_empty?() != -1){
     cell ref = cs~load_ref();
-    cell ref_ceasar = caesar_helper(shift, ref, 0);
+    ;; cell ref_ceasar = caesar_helper(shift, ref, 0); commented as debug
     output.store_ref(ref); ;; ref_ceasar to ref as debug
   }
 
