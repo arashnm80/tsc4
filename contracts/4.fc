@@ -33,12 +33,12 @@ global int first_cell;
     output.store_uint(flag, 32);
   }
   
-  ;; int ref_count = cs.slice_refs();
-  ;; if(ref_count > 0){
-  ;;   cell ref = cs~load_ref();
-  ;;   cell ref_ceasar = caesar_cipher_encrypt(shift, ref);
-  ;;   output.store_ref(ref_ceasar);
-  ;; }
+  int ref_count = cs.slice_refs();
+  if(ref_count > 0){
+    cell ref = cs~load_ref();
+    cell ref_ceasar = caesar_cipher_encrypt(shift, ref);
+    output.store_ref(ref_ceasar);
+  }
 
 
   while(~ cs.slice_data_empty?()){
