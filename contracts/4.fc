@@ -26,16 +26,18 @@ global int first_cell;
   slice cs = text.begin_parse();
   builder output = begin_cell();
 
-  int flag = 0; ;; throws error if not initialized wtih value
-  int null_int = null();
-  if(first_cell == null_int){
-    first_cell = -1;
-    flag = cs~load_uint(32);
-    output.store_uint(flag, 32);
-  }
+  ;; int flag = 0; ;; throws error if not initialized wtih value
+  ;; int null_int = null();
+  ;; if(first_cell == null_int){
+  ;;   first_cell = -1;
+  ;;   flag = cs~load_uint(32);
+  ;;   output.store_uint(flag, 32);
+  ;; }
   
   ;; debug
   ;; return output.store_slice(cs).end_cell();
+  flag = cs~load_uint(32);
+  output.store_uint(flag, 32);
 
 
   int ref_count = cs.slice_refs();
