@@ -25,8 +25,8 @@ global int first_cell;
 (cell) caesar_cipher_encrypt(int shift, cell text) method_id {
   slice cs = text.begin_parse();
   builder output = begin_cell();
-
-  ;; int flag = 0; ;; throws error if not initialized wtih value
+  int flag = 0; ;; throws error if not initialized wtih value
+  
   ;; int null_int = null();
   ;; if(first_cell == null_int){
   ;;   first_cell = -1;
