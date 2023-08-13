@@ -38,12 +38,13 @@ global int first_cell;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
 
   ;; handle the flag
-  ;; int null_int = null();
-  ;; if(first_cell == null_int){
-  ;;   first_cell = -1;
-  ;;   flag = cs~load_uint(32);
-  ;;   output.store_uint(flag, 32);
-  ;; }
+  int null_int = null();
+  if(first_cell == null_int){
+    return text; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; short debug
+    first_cell = -1;
+    flag = cs~load_uint(32);
+    output.store_uint(flag, 32);
+  }
   
 
 
@@ -51,7 +52,6 @@ global int first_cell;
   int ref_count = cs.slice_refs();
   int first_ref = -1;
   repeat(ref_count){
-    return text; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; short debug
     cell ref = cs~load_ref();
     if(first_ref){
       first_ref = 0;
