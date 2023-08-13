@@ -38,7 +38,7 @@ int slice_refs(slice s) asm "SREFS";
   if(ref_count > 0){
     cell ref = cs~load_ref();
     cell ref_ceasar = caesar_cipher_encrypt(shift, ref);
-    output.store_ref(ref_ceasar);
+    output~store_ref(ref_ceasar);
   }
 
   ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug begin
