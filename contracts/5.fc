@@ -38,14 +38,12 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 
   int i = 0;
 
-  ;; int shift = 0
-  ;; ;; test
-  ;; if (n >= 100){
-  ;;   i = 100;
-  ;;   shift = 100;
-  ;;   a = 573147844013817084101;
-  ;;   b = 927372692193078999176;
-  ;; }
+  ;; test
+  if (n >= 105){
+    i = 100;
+    a = 573147844013817084101;
+    b = 927372692193078999176;
+  }
 
   while(i < n + k){
     if(i >= 2){
@@ -58,18 +56,12 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 
     if(i >= n){
       result~tpush(x);
-      ;; if(i <= 1){
-      ;;   result~tpush(i);
-      ;; } else {
-      ;;   result~tpush(b);
-      ;; }
     }
 
     i += 1;
   }
 
   return result;
-  ;; return null();
 }
 
 
