@@ -39,7 +39,11 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
   int i = 0;
 
   ;; test
-  if (n >= 52){
+  if (n >= 102){
+    i = 102;
+    a = 354224848179261915075; ;; for i - 2
+    b = 573147844013817084101; ;; for i - 1
+  } elseif (n >= 52){
     i = 52;
     a = 12586269025; ;; for i - 2
     b = 20365011074; ;; for i - 1
