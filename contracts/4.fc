@@ -23,14 +23,14 @@ int slice_refs(slice s) asm "SREFS";
 
 ;; testable
 (cell) caesar_cipher_encrypt(int shift, cell text) method_id {
+  builder output = begin_cell();
   slice cs = text.begin_parse();
 
   slice cs_copy = cs;
   int flag = cs~load_int(32);
   if(flag == 0){
-    builder output = begin_cell().store_int(flag, 32);
+    output.store_int(flag, 32);
   } else {
-    builder output = begin_cell();
     cs = cs_copy;
   }
   
@@ -38,7 +38,7 @@ int slice_refs(slice s) asm "SREFS";
   if(ref_count > 0){
     cell ref = cs~load_ref();
     cell ref_ceasar = caesar_cipher_encrypt(shift, ref);
-    output~store_ref(ref_ceasar);
+    output.store_ref(ref_ceasar);
   }
 
   ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug begin
