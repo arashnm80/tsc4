@@ -23,7 +23,7 @@ int slice_data_empty?(slice s) asm "SDEMPTY";
 
 ;; testable
 (cell) caesar_cipher_encrypt(int shift, cell text) method_id {
-  return text;
+  ;; return text;
   slice cs = text.begin_parse();
 
   slice cs_copy = cs;
