@@ -35,9 +35,9 @@ global int first_cell;
   }
   
   ;; debug
-  ;; return output.store_slice(cs).end_cell();
   ;; flag = cs~load_uint(32);
   ;; output.store_uint(flag, 32);
+  return output.store_slice(cs).end_cell();
 
 
   int ref_count = cs.slice_refs();
