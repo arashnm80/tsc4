@@ -38,9 +38,6 @@ global int first_cell;
   ;; }
   
 
-
-  int ref_count = cs.slice_refs();
-  if(ref_count > 0){
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
   cell ref = cs~load_ref();
   output.store_ref(ref);
@@ -48,6 +45,10 @@ global int first_cell;
   output.store_uint(flag, 32);
   return output.store_slice(cs).end_cell();
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
+  
+
+  int ref_count = cs.slice_refs();
+  if(ref_count > 0){
     cell ref = cs~load_ref();
     cell ref_ceasar = caesar_cipher_encrypt(shift, ref);
     output.store_ref(ref_ceasar);
