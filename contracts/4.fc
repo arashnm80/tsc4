@@ -34,12 +34,12 @@ int slice_refs(slice s) asm "SREFS";
     cs = cs_copy;
   }
   
-  ;; int ref_count = cs.slice_refs();
-  ;; if(ref_count > 0){
-  ;;   cell ref = cs~load_ref();
-  ;;   cell ref_ceasar = caesar_cipher_encrypt(shift, ref);
-  ;;   output.store_ref(ref_ceasar);
-  ;; }
+  int ref_count = cs.slice_refs();
+  if(ref_count > 0){
+    cell ref = cs~load_ref();
+    cell ref_ceasar = caesar_cipher_encrypt(shift, ref);
+    output.store_ref(ref_ceasar);
+  }
 
   ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug begin
   ;; ;; if(cs.slice_bits() % 8 == 0){
