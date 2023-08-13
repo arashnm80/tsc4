@@ -9,8 +9,8 @@
   After calculating the result matrix, the function should return final result (as tuple).
 -}
 
-() recv_internal() {
-}
+;; () recv_internal() {
+;; }
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;method 1
 ;; ;; testable
