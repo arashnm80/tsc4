@@ -30,13 +30,6 @@ global int first_cell;
   builder output = begin_cell();
   int flag = 0; ;; throws error if not initialized wtih value
 
-  ;; int null_int = null();
-  ;; if(first_cell == null_int){
-  ;;   first_cell = -1;
-  ;;   flag = cs~load_uint(32);
-  ;;   output.store_uint(flag, 32);
-  ;; }
-  
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
   cell ref = cs~load_ref();
@@ -47,11 +40,27 @@ global int first_cell;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
 
 
+  ;; int null_int = null();
+  ;; if(first_cell == null_int){
+  ;;   first_cell = -1;
+  ;;   flag = cs~load_uint(32);
+  ;;   output.store_uint(flag, 32);
+  ;; }
+  
+
+
+
   int ref_count = cs.slice_refs();
-  if(ref_count > 0){
+  int first_ref = -1;
+  repeat(ref_count){
     cell ref = cs~load_ref();
-    cell ref_ceasar = caesar_cipher_encrypt(shift, ref);
-    output.store_ref(ref_ceasar);
+    if(first_ref){
+      first_ref = 0;
+      cell ref_ceasar = caesar_cipher_encrypt(shift, ref);
+      output.store_ref(ref_ceasar);
+    } else {
+      output.store_ref(ref);
+    }
   }
 
 
