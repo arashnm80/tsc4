@@ -52,8 +52,8 @@ global int first_cell;
   ;; repeat(cs.slice_bits() % 8){
     int chr = cs~load_uint(8);
 
-    ;; ;; calculate new character
-    ;; int new_chr = chr;
+    ;; calculate new character
+    int new_chr = chr;
     ;; ;; Encrypt uppercase characters
     ;; if (chr >= 65){
     ;;   if(chr <= 90){
