@@ -27,12 +27,12 @@ global int first_cell;
   builder output = begin_cell();
 
   int flag;
-  if(first_cell != 555555555){
+  ;; if(first_cell != 555555555){
   ;;   flag = cs~load_uint(32);
   ;;   output.store_uint(flag, 32);
   ;; } else {
   ;;   first_cell = 555555555;
-  }
+  ;; }
   
   int ref_count = cs.slice_refs();
   if(ref_count > 0){
