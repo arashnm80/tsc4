@@ -38,6 +38,7 @@ int slice_refs(slice s) asm "SREFS";
 
 
 
+
 ;; added has_flag parameter
 (cell) caesar_helper(int shift, cell text, int has_flag) method_id {
   slice cs = text.begin_parse();
@@ -54,25 +55,17 @@ int slice_refs(slice s) asm "SREFS";
 
   ;; handle the flag
   if(has_flag){
-    has_flag = 0;
     flag = cs~load_uint(32);
     output.store_uint(flag, 32);
   }
   
 
 
-  ;; handle the refs
-  int ref_count = cs.slice_refs();
-  int first_ref = -1;
-  repeat(ref_count){
+  ;; handle the ref
+  if(cs.slice_refs_empty?() != -1){
     cell ref = cs~load_ref();
-    if(first_ref){
-      first_ref = 0;
-      cell ref_ceasar = caesar_helper(shift, ref, has_flag);
-      output.store_ref(ref_ceasar);
-    } else {
-      output.store_ref(ref);
-    }
+    cell ref_ceasar = caesar_helper(shift, ref, 0);
+    output.store_ref(ref_ceasar);
   }
 
 
