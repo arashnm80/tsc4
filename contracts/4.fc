@@ -24,7 +24,7 @@ global int first_cell;
 
 ;; testable
 (cell) caesar_cipher_encrypt(int shift, cell text) method_id {
-  return text;
+  ;; return text;
 
   slice cs = text.begin_parse();
   builder output = begin_cell();
