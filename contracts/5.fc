@@ -39,8 +39,8 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
   int i = 0;
 
   ;; test
-  i = 12;
   if (n >= 12){
+    i = 12;
     a = 55; ;; for 10
     b = 89; ;; for 11
   }
