@@ -24,8 +24,6 @@ global int first_cell;
 
 ;; testable
 (cell) caesar_cipher_encrypt(int shift, cell text) method_id {
-  ;; return text;
-
   slice cs = text.begin_parse();
   builder output = begin_cell();
   int flag = 0; ;; throws error if not initialized wtih value
@@ -34,8 +32,8 @@ global int first_cell;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
   ;; cell ref = cs~load_ref();
   ;; output.store_ref(ref);
-  flag = cs~load_uint(32);
-  output.store_uint(flag, 32);
+  ;; flag = cs~load_uint(32);
+  ;; output.store_uint(flag, 32);
   ;; return output.store_slice(cs).end_cell();
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
 
@@ -53,6 +51,7 @@ global int first_cell;
   int ref_count = cs.slice_refs();
   int first_ref = -1;
   repeat(ref_count){
+    return text; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; short debug
     cell ref = cs~load_ref();
     if(first_ref){
       first_ref = 0;
