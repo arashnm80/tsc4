@@ -1,104 +1,104 @@
-{-
-  TASK 4 - Caesar Cipher
-  Implement a Caesar cipher encryption and decryption functions.
-  The input is a string (https://docs.ton.org/develop/smart-contracts/guidelines/internal-messages#simple-message-with-comment)
-  where the text is encrypted in a cell (after 32bit 00000000 prefix flag), the algorithm rotates the characters and the last ASCII
-  character should go to the beginning. Return new text encoded in cell.
--}
+;; {-
+;;   TASK 4 - Caesar Cipher
+;;   Implement a Caesar cipher encryption and decryption functions.
+;;   The input is a string (https://docs.ton.org/develop/smart-contracts/guidelines/internal-messages#simple-message-with-comment)
+;;   where the text is encrypted in a cell (after 32bit 00000000 prefix flag), the algorithm rotates the characters and the last ASCII
+;;   character should go to the beginning. Return new text encoded in cell.
+;; -}
 
-() recv_internal() {
-}
+;; () recv_internal() {
+;; }
 
-;; (slice, slice) load_bits(slice s, int len) asm(s len -> 1 0) "LDSLICEX"; ;; causes compile error
-slice skip_bits(slice s, int len) asm "SDSKIPFIRST";
-(slice, ()) ~skip_bits(slice s, int len) asm "SDSKIPFIRST";
-int slice_data_empty?(slice s) asm "SDEMPTY";
-;; builder store_int(builder b, int x, int len) asm(x b len) "STIX"; ;; causes compile error
-(slice, int) ~load_int(slice s, int len) asm(s len -> 1 0) "LDIX";
-(slice, int) ~load_uint(slice s, int len) asm( -> 1 0) "LDUX";
-int slice_bits(slice s) asm "SBITS";
-int slice_refs(slice s) asm "SREFS";
-(int, int) slice_bits_refs(slice s) asm "SBITREFS";
-
-
-
-
-
-;; testable
-(cell) caesar_cipher_encrypt(int shift, cell text) method_id {
-  return caesar_helper(shift, text, -1);
-}
-
-;; testable
-(cell) caesar_cipher_decrypt(int shift, cell text) method_id {
-  return caesar_helper(-1 * shift, text, -1);
-  ;; int reverse_shift = - shift;
-  ;; return caesar_cipher_encrypt(reverse_shift, text);
-}
+;; ;; (slice, slice) load_bits(slice s, int len) asm(s len -> 1 0) "LDSLICEX"; ;; causes compile error
+;; slice skip_bits(slice s, int len) asm "SDSKIPFIRST";
+;; (slice, ()) ~skip_bits(slice s, int len) asm "SDSKIPFIRST";
+;; int slice_data_empty?(slice s) asm "SDEMPTY";
+;; ;; builder store_int(builder b, int x, int len) asm(x b len) "STIX"; ;; causes compile error
+;; (slice, int) ~load_int(slice s, int len) asm(s len -> 1 0) "LDIX";
+;; (slice, int) ~load_uint(slice s, int len) asm( -> 1 0) "LDUX";
+;; int slice_bits(slice s) asm "SBITS";
+;; int slice_refs(slice s) asm "SREFS";
+;; (int, int) slice_bits_refs(slice s) asm "SBITREFS";
 
 
 
 
 
-;; added has_flag parameter
-(cell) caesar_helper(int shift, cell text, int has_flag) method_id {
+;; ;; testable
+;; (cell) caesar_cipher_encrypt(int shift, cell text) method_id {
+;;   return caesar_helper(shift, text, -1);
+;; }
 
-  slice cs = text.begin_parse();
-  builder output = begin_cell();
-
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
-  ;; if(cs.slice_refs_empty?() != -1){
-  ;;   cell ref = cs~load_ref();
-  ;;   output = output.store_ref(ref);
-  ;; }
-  ;; flag = cs~load_uint(32);
-  ;; output = output.store_uint(flag, 32);
-  ;; return output.store_slice(cs).end_cell();
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
+;; ;; testable
+;; (cell) caesar_cipher_decrypt(int shift, cell text) method_id {
+;;   return caesar_helper(-1 * shift, text, -1);
+;;   ;; int reverse_shift = - shift;
+;;   ;; return caesar_cipher_encrypt(reverse_shift, text);
+;; }
 
 
-  ;; handle the flag
-  if(has_flag){
-    int flag = cs~load_uint(32);
-    ;; flag = cs~load_uint(32);
-    ;; cs~load_uint(32);
-    output = output.store_uint(0, 32);
-  }
+
+
+
+;; ;; added has_flag parameter
+;; (cell) caesar_helper(int shift, cell text, int has_flag) method_id {
+
+;;   slice cs = text.begin_parse();
+;;   builder output = begin_cell();
+
+;;   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
+;;   ;; if(cs.slice_refs_empty?() != -1){
+;;   ;;   cell ref = cs~load_ref();
+;;   ;;   output = output.store_ref(ref);
+;;   ;; }
+;;   ;; flag = cs~load_uint(32);
+;;   ;; output = output.store_uint(flag, 32);
+;;   ;; return output.store_slice(cs).end_cell();
+;;   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
+
+
+;;   ;; handle the flag
+;;   if(has_flag){
+;;     int flag = cs~load_uint(32);
+;;     ;; flag = cs~load_uint(32);
+;;     ;; cs~load_uint(32);
+;;     output = output.store_uint(0, 32);
+;;   }
   
 
 
-  ;; handle the ref
-  if(cs.slice_refs_empty?() != -1){
-    cell ref = cs~load_ref();
-    cell ref_ceasar = caesar_helper(shift, ref, 0);
-    output = output.store_ref(ref_ceasar);
-  }
+;;   ;; handle the ref
+;;   if(cs.slice_refs_empty?() != -1){
+;;     cell ref = cs~load_ref();
+;;     cell ref_ceasar = caesar_helper(shift, ref, 0);
+;;     output = output.store_ref(ref_ceasar);
+;;   }
 
 
 
-  ;; handle characters
-  while(~ cs.slice_data_empty?()){
-  ;; repeat(cs.slice_bits() % 8){
-    int chr = cs~load_uint(8);
+;;   ;; handle characters
+;;   while(~ cs.slice_data_empty?()){
+;;   ;; repeat(cs.slice_bits() % 8){
+;;     int chr = cs~load_uint(8);
 
-    if(chr >= 97){ ;; Encrypt lowercase characters
-      if(chr <= 122){
-        chr = ((chr + shift - 97) % 26) + 97;
-      }
-    } elseif (chr >= 65){ ;; Encrypt uppercase characters
-      if(chr <= 90){
-        chr = ((chr + shift - 65) % 26) + 65;
-      }
-    }
+;;     if(chr >= 97){ ;; Encrypt lowercase characters
+;;       if(chr <= 122){
+;;         chr = ((chr + shift - 97) % 26) + 97;
+;;       }
+;;     } elseif (chr >= 65){ ;; Encrypt uppercase characters
+;;       if(chr <= 90){
+;;         chr = ((chr + shift - 65) % 26) + 65;
+;;       }
+;;     }
 
-    output = output.store_uint(chr, 8);
-  }
+;;     output = output.store_uint(chr, 8);
+;;   }
 
-  return output.end_cell();
-}
+;;   return output.end_cell();
+;; }
 
-;; useful links:
-;; https://docs.ton.org/develop/func/literals_identifiers#string-literals
-;; https://docs.ton.org/develop/func/statements#operators
-;; https://docs.ton.org/develop/smart-contracts/fees#how-to-calculate-fees
-;; https://docs.ton.org/develop/howto/fees-low-level#computation-fees
+;; ;; useful links:
+;; ;; https://docs.ton.org/develop/func/literals_identifiers#string-literals
+;; ;; https://docs.ton.org/develop/func/statements#operators
+;; ;; https://docs.ton.org/develop/smart-contracts/fees#how-to-calculate-fees
+;; ;; https://docs.ton.org/develop/howto/fees-low-level#computation-fees

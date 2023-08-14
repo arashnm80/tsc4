@@ -38,21 +38,33 @@ int slice_refs(slice s) asm "SREFS";
 
 ;; testable
 (cell) find_and_replace(int flag, int value, cell linked_list) method_id {
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
+  return linked_list;
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
+
+
+  cs = linked_list.begin_parse();
+
   tuple tp = empty_tuple();
-  cell cl = linked_list;
-  int run_loop = -1;
-  while(run_loop){
-    slice cs = cl.begin_parse();
-    int data = cs~load_uint(128);
-    tp.tpush(data);
+  tuple sizes = empty_tuple();
+  
+  slice cs_only_data = cs.preload_bits(cs.slice_bits());
+  tp~tpush(cs_only_data);
+  sizes~tpush(cs.slice_bits());
 
+  while(cs.slice_refs_empty?() != -1){
+    cell ref = cs~load_ref();
+    cs = ref.begin_parse();
 
-    if(cs.slice_refs() == 1){
-      cl = cl~load_ref();
-    } else {
-      run_loop = 0;
-    }
+    cs_only_data = cs.preload_bits(cs.slice_bits());
+    tp~tpush(cs_only_data);
+    sizes~tpush(cs.slice_bits());
   }
-  return begin_cell().end_cell();
+
+;;   return begin_cell().end_cell();
 }
 
+
+;; useful links:
+;; https://docs.ton.org/develop/func/cookbook#how-to-get-only-data-bits-from-a-slice-without-refs
+;; https://docs.ton.org/develop/func/statements#until-loop
