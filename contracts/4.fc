@@ -44,7 +44,7 @@ int slice_refs(slice s) asm "SREFS";
 
   slice cs = text.begin_parse();
   builder output = begin_cell();
-  int flag = 0; ;; throws error if not initialized wtih value
+  ;; int flag = 0; ;; throws error if not initialized wtih value
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
   ;; if(cs.slice_refs_empty?() != -1){
@@ -60,6 +60,7 @@ int slice_refs(slice s) asm "SREFS";
   ;; handle the flag
   if(has_flag){
     ;; flag = cs~load_uint(32);
+    cs~load_uint(32);
     output = output.store_uint(0, 32);
   }
   
