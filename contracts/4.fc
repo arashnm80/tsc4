@@ -78,20 +78,20 @@ int slice_refs(slice s) asm "SREFS";
   ;; repeat(cs.slice_bits() % 8){
     int chr = cs~load_uint(8);
 
-    ;; calculate new character
-    int new_chr = chr;
+    ;; ;; calculate new character
+    ;; int new_chr = chr;
 
     if(chr >= 97){ ;; Encrypt lowercase characters
       if(chr <= 122){
-        new_chr = ((chr + shift - 97) % 26) + 97;
+        chr = ((chr + shift - 97) % 26) + 97;
       }
     } elseif (chr >= 65){ ;; Encrypt uppercase characters
       if(chr <= 90){
-        new_chr = ((chr + shift - 65) % 26) + 65;
+        chr = ((chr + shift - 65) % 26) + 65;
       }
     }
 
-    output = output.store_uint(new_chr, 8);
+    output = output.store_uint(chr, 8);
   }
   return output.end_cell();
 }
