@@ -32,8 +32,8 @@ int slice_refs(slice s) asm "SREFS";
 ;; testable
 (cell) caesar_cipher_decrypt(int shift, cell text) method_id {
   return caesar_helper(-1 * shift, text, -1);
-  int reverse_shift = - shift;
-  return caesar_cipher_encrypt(reverse_shift, text);
+  ;; int reverse_shift = - shift;
+  ;; return caesar_cipher_encrypt(reverse_shift, text);
 }
 
 
@@ -82,13 +82,13 @@ int slice_refs(slice s) asm "SREFS";
     int chr = cs~load_uint(8);
 
     if(chr >= 97){ ;; Encrypt lowercase characters
-      if(chr <= 122){
+      ;; if(chr <= 122){
         chr = ((chr + shift - 97) % 26) + 97;
-      }
+      ;; }
     } elseif (chr >= 65){ ;; Encrypt uppercase characters
-      if(chr <= 90){
+      ;; if(chr <= 90){
         chr = ((chr + shift - 65) % 26) + 65;
-      }
+      ;; }
     }
 
     output = output.store_uint(chr, 8);

@@ -24,7 +24,16 @@
 }
 
 (int) tlen(tuple t) asm "TLEN";
+;; (slice, slice) load_bits(slice s, int len) asm(s len -> 1 0) "LDSLICEX"; ;; causes compile error
+slice skip_bits(slice s, int len) asm "SDSKIPFIRST";
+(slice, ()) ~skip_bits(slice s, int len) asm "SDSKIPFIRST";
+int slice_data_empty?(slice s) asm "SDEMPTY";
+;; builder store_int(builder b, int x, int len) asm(x b len) "STIX"; ;; causes compile error
+(slice, int) ~load_int(slice s, int len) asm(s len -> 1 0) "LDIX";
+(slice, int) ~load_uint(slice s, int len) asm( -> 1 0) "LDUX";
+int slice_bits(slice s) asm "SBITS";
 int slice_refs(slice s) asm "SREFS";
+(int, int) slice_bits_refs(slice s) asm "SBITREFS";
 
 
 ;; testable
