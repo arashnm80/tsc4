@@ -85,7 +85,8 @@ int slice_refs(slice s) asm "SREFS";
       if(chr <= 90){
         new_chr = ((chr + shift - 65) % 26) + 65;
       }
-    } elseif(chr >= 97){ ;; Encrypt lowercase characters
+    }
+    if(chr >= 97){ ;; Encrypt lowercase characters
       if(chr <= 122){
         new_chr = ((chr + shift - 97) % 26) + 97;
       }
