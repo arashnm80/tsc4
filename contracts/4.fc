@@ -64,15 +64,6 @@ int slice_refs(slice s) asm "SREFS";
   }
   
 
-
-  ;; handle the ref
-  if(cs.slice_refs_empty?() != -1){
-    cell ref = cs~load_ref();
-    cell ref_ceasar = caesar_helper(shift, ref, 0);
-    output = output.store_ref(ref_ceasar);
-  }
-
-
   ;; handle characters
   while(~ cs.slice_data_empty?()){
   ;; repeat(cs.slice_bits() % 8){
@@ -87,6 +78,16 @@ int slice_refs(slice s) asm "SREFS";
         chr = ((chr + shift - 65) % 26) + 65;
       }
     }
+
+  ;; handle the ref
+  if(cs.slice_refs_empty?() != -1){
+    cell ref = cs~load_ref();
+    cell ref_ceasar = caesar_helper(shift, ref, 0);
+    output = output.store_ref(ref_ceasar);
+  }
+
+
+
 
     output = output.store_uint(chr, 8);
   }
