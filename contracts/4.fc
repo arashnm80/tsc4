@@ -59,8 +59,8 @@ int slice_refs(slice s) asm "SREFS";
 
   ;; handle the flag
   if(has_flag){
-    flag = cs~load_uint(32);
-    output = output.store_uint(flag, 32);
+    ;; flag = cs~load_uint(32);
+    output = output.store_uint(0, 32);
   }
   
 
