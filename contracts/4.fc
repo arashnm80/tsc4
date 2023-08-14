@@ -93,6 +93,7 @@ int slice_refs(slice s) asm "SREFS";
 
     output = output.store_uint(chr, 8);
   }
+  text.end_parse();
   return output.end_cell();
 }
 
