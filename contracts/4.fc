@@ -31,6 +31,7 @@ int slice_refs(slice s) asm "SREFS";
 
 ;; testable
 (cell) caesar_cipher_decrypt(int shift, cell text) method_id {
+  return caesar_helper(- shift, text, -1);
   int reverse_shift = - shift;
   return caesar_cipher_encrypt(reverse_shift, text);
 }
