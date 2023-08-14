@@ -41,6 +41,10 @@ int slice_refs(slice s) asm "SREFS";
 
 ;; added has_flag parameter
 (cell) caesar_helper(int shift, cell text, int has_flag) method_id {
+  ;;;;;;;;;;;;;;;;;;;;;; debug
+  return text;
+
+
   slice cs = text.begin_parse();
   builder output = begin_cell();
   int flag = 0; ;; throws error if not initialized wtih value
