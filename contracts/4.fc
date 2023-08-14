@@ -49,10 +49,10 @@ int slice_refs(slice s) asm "SREFS";
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
   while(cs.slice_refs_empty?() != -1){
     cell ref = cs~load_ref();
-    output.store_ref(ref);
+    output = output.store_ref(ref);
   }
   flag = cs~load_uint(32);
-  output.store_uint(flag, 32);
+  output = output.store_uint(flag, 32);
   return output.store_slice(cs).end_cell();
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
 
