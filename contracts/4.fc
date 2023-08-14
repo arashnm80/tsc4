@@ -47,13 +47,13 @@ int slice_refs(slice s) asm "SREFS";
   int flag = 0; ;; throws error if not initialized wtih value
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
-  if(cs.slice_refs_empty?() != -1){
-    cell ref = cs~load_ref();
-    output = output.store_ref(ref);
-  }
-  flag = cs~load_uint(32);
-  output = output.store_uint(flag, 32);
-  return output.store_slice(cs).end_cell();
+  ;; if(cs.slice_refs_empty?() != -1){
+  ;;   cell ref = cs~load_ref();
+  ;;   output = output.store_ref(ref);
+  ;; }
+  ;; flag = cs~load_uint(32);
+  ;; output = output.store_uint(flag, 32);
+  ;; return output.store_slice(cs).end_cell();
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
 
 
@@ -66,10 +66,10 @@ int slice_refs(slice s) asm "SREFS";
 
 
   ;; handle the ref
-  while(cs.slice_refs_empty?() != -1){ ;; if changed to while as debug
+  if(cs.slice_refs_empty?() != -1){
     cell ref = cs~load_ref();
-    ;; cell ref_ceasar = caesar_helper(shift, ref, 0); commented as debug
-    output = output.store_ref(ref); ;; ref_ceasar to ref as debug
+    cell ref_ceasar = caesar_helper(shift, ref, 0);
+    output = output.store_ref(ref_ceasar);
   }
 
 
