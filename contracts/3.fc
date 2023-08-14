@@ -43,14 +43,17 @@ int slice_refs(slice s) asm "SREFS";
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
 
 
-  cs = linked_list.begin_parse();
 
   tuple tp = empty_tuple();
   tuple sizes = empty_tuple();
   
+  
+  slice cs = linked_list.begin_parse();
   slice cs_only_data = cs.preload_bits(cs.slice_bits());
   tp~tpush(cs_only_data);
   sizes~tpush(cs.slice_bits());
+
+
 
   while(cs.slice_refs_empty?() != -1){
     cell ref = cs~load_ref();
@@ -60,6 +63,8 @@ int slice_refs(slice s) asm "SREFS";
     tp~tpush(cs_only_data);
     sizes~tpush(cs.slice_bits());
   }
+
+
 
 ;;   return begin_cell().end_cell();
 }
