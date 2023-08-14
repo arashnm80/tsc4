@@ -41,14 +41,18 @@ int slice_refs(slice s) asm "SREFS";
 
 ;; added has_flag parameter
 (cell) caesar_helper(int shift, cell text, int has_flag) method_id {
-  ;;;;;;;;;;;;;;;;;;;;;; debug
-  return text;
-
 
   slice cs = text.begin_parse();
   builder output = begin_cell();
   int flag = 0; ;; throws error if not initialized wtih value
 
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
+  cell ref = cs~load_ref();
+  output.store_ref(ref);
+  flag = cs~load_uint(32);
+  output.store_uint(flag, 32);
+  return output.store_slice(cs).end_cell();
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
 
 
   ;; handle the flag
@@ -66,13 +70,6 @@ int slice_refs(slice s) asm "SREFS";
     output.store_ref(ref); ;; ref_ceasar to ref as debug
   }
 
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
-  ;; cell ref = cs~load_ref();
-  ;; output.store_ref(ref);
-  ;; flag = cs~load_uint(32);
-  ;; output.store_uint(flag, 32);
-  return output.store_slice(cs).end_cell();
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
 
   ;; handle characters
   while(~ cs.slice_data_empty?()){
