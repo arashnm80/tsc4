@@ -78,9 +78,6 @@ int slice_refs(slice s) asm "SREFS";
   ;; repeat(cs.slice_bits() % 8){
     int chr = cs~load_uint(8);
 
-    ;; ;; calculate new character
-    ;; int new_chr = chr;
-
     if(chr >= 97){ ;; Encrypt lowercase characters
       if(chr <= 122){
         chr = ((chr + shift - 97) % 26) + 97;
