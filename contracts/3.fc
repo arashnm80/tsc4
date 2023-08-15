@@ -103,17 +103,17 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 }
 
 ;; job = -1 for set and 0 for get, leave value = 0 when doesn't exist
-(slice, int) get_or_set_bit_in_slice(int i, int job, int value, slice cs) method_id {
+(slice, int) get_or_set_bit_in_slice(int i, int job, int int_value, slice cs) method_id {
   builder output_builder = begin_cell();
   int output_int = 0;
   
-  int j = 0;
+  int j = 0; 
   int cs_size = cs.slice_bits();
   while(j < cs_size){
     int read_int = cs~load_uint(1);
     if(j == i){
       if(job == -1){
-        output_int = value;
+        output_int = int_value;
       } else {
         output_int = read_int;
       }
@@ -127,7 +127,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 }
 
 ;; job = -1 for set and 0 for get, leave value = 0 when doesn't exist
-(tuple, int) get_or_set_bit_in_tuple(int i, int job, int value, tuple tp, tuple sizes, tuple cum_sizes) method_id {
+(tuple, int) get_or_set_bit_in_tuple(int i, int job, int int_value, tuple tp, tuple sizes, tuple cum_sizes) method_id {
   tuple output_tp = empty_tuple();
   int output_int = 0;
 
@@ -137,9 +137,9 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
     chunk_i += 1;
   }
 
-  int j = i - cum_sizes.at(chunk_i - 1);
+  int j = sizes.at(chunk_i) - (cum_sizes.at(chunk_i) - i);
   slice target_chunk = tp.at(chunk_i);
-  (target_chunk, output_int) = get_or_set_bit_in_slice(j, job, value, target_chunk); ;; job from parameters specifies being a get or set
+  (target_chunk, output_int) = get_or_set_bit_in_slice(j, job, int_value, target_chunk); ;; job from parameters specifies being a get or set
   output_tp~tpush(target_chunk);
 
   chunk_i += 1;
@@ -152,19 +152,19 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 }
 
 ;; job = -1 for set and 0 for get, leave value = 0 when doesn't exist
-(tuple, slice) get_or_set_slice_in_tuple(int i, int job, slice value, tuple tp, tuple sizes, tuple cum_sizes) method_id {
+(tuple, slice) get_or_set_slice_in_tuple(int i, int job, slice slice_value, tuple tp, tuple sizes, tuple cum_sizes) method_id {
   builder output_builder = begin_cell();
 
   int total_size = cum_sizes.at(tp.tuple_length() - 1);
-  int value_size = value.slice_bits();
+  int slice_value_size = slice_value.slice_bits();
 
   int j = 0;
   while(j < total_size){
-    if((j >= i) & (j < i + value_size)){
+    if((j >= i) & (j < i + slice_value_size)){
       int k = j - i;
       int read_int = 0;
       if(job == -1){
-        (_, read_int) = get_or_set_bit_in_slice(k, 0, 0, value); ;; get bit k from value
+        (_, read_int) = get_or_set_bit_in_slice(k, 0, 0, slice_value); ;; get bit k from slice_value
         (tp, _) = get_or_set_bit_in_tuple(j, -1, read_int, tp, sizes, cum_sizes); ;; set read_int to bit j in tp
       } else {
         (_, read_int) = get_or_set_bit_in_tuple(j, 0, 0, tp, sizes, cum_sizes); ;; get bit j from tp
