@@ -173,7 +173,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
     j += 1;
   }
 
-  slice ouput_slice = output_builder.end_cell();
+  slice ouput_slice = output_builder.end_cell().begin_parse();
   return (tp, output_slice);
 }
 
