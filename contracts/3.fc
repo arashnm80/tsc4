@@ -50,7 +50,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
   int i = 0;
   while(i <= (total_size - flag_size)){
     ;; get slice at index i
-    (tuple temp_tp, slice check) = get_or_set_slice_in_tuple(i, 0, 0, tuple tp, tuple sizes, tuple cum_sizes);
+    (tuple temp_tp, slice check) = get_or_set_slice_in_tuple(i, 0, 0, tp, sizes, cum_sizes);
     int int_from_check = check.load_uint(flag_size);
     if(flag == int_from_check){
       slice value_to_slice = int_to_slice(value, flag_size);
