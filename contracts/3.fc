@@ -52,9 +52,6 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
     slice empty_slice = "";
     ;; get slice at index i
     (tuple temp_tp, slice check) = get_or_set_slice_in_tuple(i, 0, empty_slice, tp, sizes, cum_sizes); ;; commented as debug
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;debug
-    ;; slice check = "";
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;debug
     int int_from_check = check~load_uint(flag_size);
     if(flag == int_from_check){
       slice value_to_slice = int_to_slice(value, flag_size);
@@ -178,8 +175,12 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
   }
 
 
-  cell output_cell = output_builder.end_cell();
-  return (tp, output_cell.begin_parse());
+  ;; cell output_cell = output_builder.end_cell();
+  slice ouput_slice = output_builder
+                      .end_cell()
+                      .begin_parse();
+  ;; return (tp, output_cell.begin_parse());
+  return (tp, output_slice);
 }
 
 (tuple) linked_list_to_tuple(cell linked_list) method_id {
