@@ -51,12 +51,12 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
   while(i <= (total_size - flag_size)){
     slice empty_slice = "";
     ;; get slice at index i
-    (tuple temp_tp, slice check) = get_or_set_slice_in_tuple(i, 0, empty_slice, tp, sizes, cum_sizes); ;; commented as debug
+    (tuple temp_tp, slice check) = get_or_set_slice_in_tuple(i, 0, empty_slice, tp, sizes, cum_sizes);
     int int_from_check = check~load_uint(flag_size);
     if(flag == int_from_check){
       slice value_to_slice = int_to_slice(value, flag_size);
       ;; set value as a replacement for flag
-      (tp, slice temp_slice) = get_or_set_slice_in_tuple(i, -1, value_to_slice, tp, sizes, cum_sizes); ;; commented as debug
+      (tp, slice temp_slice) = get_or_set_slice_in_tuple(i, -1, value_to_slice, tp, sizes, cum_sizes);
       i += flag_size;
     } else {
       i += 1;
@@ -176,10 +176,11 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 
 
   cell output_cell = output_builder.end_cell();
+  return (tp, output_cell.begin_parse());
+  ;;;;;;;;;;;;;;;; apparently the upper one is correct but lower one causes compile error
   ;; slice ouput_slice = output_builder
   ;;                     .end_cell()
   ;;                     .begin_parse();
-  return (tp, output_cell.begin_parse());
   ;; return (tp, output_slice);
 }
 
