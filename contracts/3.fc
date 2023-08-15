@@ -178,7 +178,9 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
   ;; }
 
 
-  slice ouput_slice = output_builder.end_cell().begin_parse();
+  slice ouput_slice = output_builder
+                      .end_cell()
+                      .begin_parse();
   ;; return (tp, output_slice); ;; commented as debug
   return (tp, slice_value);
 }
@@ -196,6 +198,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
       linked_list = cs~load_ref();
     }
   }
+  return tp; ;; added to disable compiler error (debug)
 }
 
 (cell) tuple_to_linked_list(tuple tp) method_id {
