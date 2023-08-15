@@ -179,7 +179,8 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 
 
   slice ouput_slice = output_builder.end_cell().begin_parse();
-  return (tp, output_slice);
+  ;; return (tp, output_slice); ;; commented as debug
+  return (tp, slice_value);
 }
 
 (tuple) linked_list_to_tuple(cell linked_list) method_id {
