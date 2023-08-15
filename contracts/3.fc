@@ -197,7 +197,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
       linked_list = cs~load_ref();
     }
   }
-  return tp; ;; added to disable compiler error (debug)
+  ;; return tp; ;; added to disable compiler error (debug)
 }
 
 (cell) tuple_to_linked_list(tuple tp) method_id {
