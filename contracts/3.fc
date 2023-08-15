@@ -34,42 +34,182 @@ int slice_data_empty?(slice s) asm "SDEMPTY";
 int slice_bits(slice s) asm "SBITS";
 int slice_refs(slice s) asm "SREFS";
 (int, int) slice_bits_refs(slice s) asm "SBITREFS";
+forall X -> (tuple, X) ~tpop (tuple t) asm "TPOP";
+int tuple_length (tuple t) asm "TLEN";
+forall X -> (tuple) to_tuple (X x) asm "NOP";
+
 
 
 ;; testable
 (cell) find_and_replace(int flag, int value, cell linked_list) method_id {
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
-  return linked_list;
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
+  tuple tp = linked_list_to_tuple(linked_list);
+  (tuple sizes, tuple cum_sizes) = get_sizes_and_cum_sizes_tuples(tp);
+  int total_size = cum_sizes.at(tp.tuple_length() - 1);
+  int flag_size = count_bits(flag);
 
-
-
-  tuple tp = empty_tuple();
-  tuple sizes = empty_tuple();
-  
-  
-  slice cs = linked_list.begin_parse();
-  slice cs_only_data = cs.preload_bits(cs.slice_bits());
-  tp~tpush(cs_only_data);
-  sizes~tpush(cs.slice_bits());
-
-
-
-  while(cs.slice_refs_empty?() != -1){
-    cell ref = cs~load_ref();
-    cs = ref.begin_parse();
-
-    cs_only_data = cs.preload_bits(cs.slice_bits());
-    tp~tpush(cs_only_data);
-    sizes~tpush(cs.slice_bits());
+  int i = 0;
+  while(i <= (total_size - flag_size)){
+    ;; get slice at index i
+    (tuple temp_tp, slice check) = get_or_set_slice_in_tuple(i, 0, 0, tuple tp, tuple sizes, tuple cum_sizes);
+    int int_from_check = check.load_uint(flag_size);
+    if(flag == int_from_check){
+      slice value_to_slice = int_to_slice(value, flag_size);
+      ;; set value as a replacement for flag
+      (tp, slice temp_slice) = get_or_set_slice_in_tuple(i, -1, value_to_slice, tp, sizes, cum_sizes);
+      i += flag_size;
+    } else {
+      i += 1;
+    }
   }
 
+  cell output_linked_list = tuple_to_linked_list(tp);
+  return output_linked_list;
+}
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; helper functions:
 
-;;   return begin_cell().end_cell();
+(slice) int_to_slice(int n, int n_size) method_id {
+  slice output = begin_cell()
+                  .store_uint(n, n_size)
+                  .end_cell()
+                  .begin_parse();
+  return output;
+}
+
+(int) count_bits(int n) method_id {
+  int count = 0;
+  while (n > 0) {
+      count += 1;
+      n >>= 1; ;; Shift the number right by 1
+  }
+  return count;
+}
+
+;; first: sizes, second: cum_sizes
+(tuple, tuple) get_sizes_and_cum_sizes_tuples(tuple tp) method_id {
+  tuple sizes = empty_tuple();
+  tuple cum_sizes = empty_tuple();
+  int i = 0;
+  while(i < tp.tuple_length()){
+    sizes~tpush(tp.at(i).slice_bits());
+    if(i == 0){
+      cum_sizes~tpush(sizes.at(0));
+    } else {
+      cum_sizes~tpush(cum_sizes.at(i - 1) + sizes.at(i));
+    }
+  }
+  return (sizes, cum_sizes);
+}
+
+;; job = -1 for set and 0 for get, leave value = 0 when doesn't exist
+(slice, int) get_or_set_bit_in_slice(int i, int job, int value, slice cs) method_id {
+  builder output_builder = begin_cell();
+  int output_int = 0;
+  
+  int j = 0;
+  int cs_size = cs.slice_bits();
+  while(j < cs_size){
+    int read_int = cs~load_uint(1);
+    if(j == i){
+      if(job == -1){
+        output_int = value;
+      } else {
+        output_int = read_int;
+      }
+      output_builder = output_builder.store_uint(output_int, 1);
+    }
+    output_builder = output_builder.store_uint(read_int, 1);
+  }
+
+  slice output_slice = output_builder.end_cell().begin_parse();
+  return (output_slice, output_int);
+}
+
+;; job = -1 for set and 0 for get, leave value = 0 when doesn't exist
+(tuple, int) get_or_set_bit_in_tuple(int i, int job, int value, tuple tp, tuple sizes, tuple cum_sizes) method_id {
+  tuple output_tp = empty_tuple();
+  int output_int = 0;
+
+  int chunk_i = 0;
+  while(i > cum_sizes.at(chunk_i)){
+    output_tp~tpush(tp.at(chunk_i));
+    chunk_i += 1;
+  }
+
+  int j = i - cum_sizes.at(chunk_i - 1);
+  slice target_chunk = tp.at(chunk_i);
+  (target_chunk, output_int) = get_or_set_bit_in_slice(j, job, value, target_chunk); ;; job from parameters specifies being a get or set
+  output_tp~tpush(target_chunk);
+
+  chunk_i += 1;
+  while(chunk_i < tp.tuple_length()){
+    output_tp~tpush(tp.at(chunk_i));
+    chunk_i += 1;
+  }
+
+  return (output_tp, output_int);
+}
+
+;; job = -1 for set and 0 for get, leave value = 0 when doesn't exist
+(tuple, slice) get_or_set_slice_in_tuple(int i, int job, slice value, tuple tp, tuple sizes, tuple cum_sizes) method_id {
+  builder output_builder = begin_cell();
+
+  int total_size = cum_sizes.at(tp.tuple_length() - 1);
+  int value_size = value.slice_bits();
+
+  int j = 0;
+  while(j < total_size){
+    if((j >= i) & (j < i + value_size)){
+      int k = j - i;
+      int read_int = 0;
+      if(job == -1){
+        (_, read_int) = get_or_set_bit_in_slice(k, 0, 0, value); ;; get bit k from value
+        (tp, _) = get_or_set_bit_in_tuple(j, -1, read_int, tp, sizes, cum_sizes); ;; set read_int to bit j in tp
+      } else {
+        (_, read_int) = get_or_set_bit_in_tuple(j, 0, 0, tp, sizes, cum_sizes); ;; get bit j from tp
+      }
+      output_builder.store_uint(read_int, 1);
+    }
+    j += 1;
+  }
+
+  slice ouput_slice = output_builder.end_cell();
+  return (tp, output_slice);
+}
+
+(tuple) linked_list_to_tuple(cell linked_list) method_id {
+  tuple tp = empty_tuple();
+  while(-1){
+    slice cs = linked_list.begin_parse();
+    slice cs_only_data = cs.preload_bits(cs.slice_bits());
+    tp~tpush(cs_only_data);
+
+    if(cs.slice_refs_empty?()){
+      return tp;
+    } else {
+      linked_list = cs~load_ref();
+    }
+  }
+}
+
+(cell) tuple_to_linked_list(tuple tp) method_id {
+  slice last_cs = tp~tpop();
+  cell linked_list = begin_cell()
+                   .store_slice(last_cs)
+                   .end_cell();
+  while(tp.tuple_length() > 0){
+    last_cs = tp~tpop();
+    linked_list = begin_cell()
+                  .store_slice(last_cs)
+                  .store_ref(linked_list)
+                  .end_cell();
+  }
+  return linked_list;
 }
 
 
 ;; useful links:
 ;; https://docs.ton.org/develop/func/cookbook#how-to-get-only-data-bits-from-a-slice-without-refs
 ;; https://docs.ton.org/develop/func/statements#until-loop
+;; https://docs.ton.org/develop/func/statements#operators
+;; https://docs.ton.org/develop/func/cookbook#how-to-define-your-own-modifying-method
