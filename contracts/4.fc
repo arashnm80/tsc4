@@ -73,6 +73,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
     return begin_cell().end_cell();
   }
 
+
   ;; return tuple_to_linked_list(linked_list_to_tuple(text));
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug for task 3
 
