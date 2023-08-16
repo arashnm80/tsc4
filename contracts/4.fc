@@ -27,7 +27,7 @@ int slice_refs(slice s) asm "SREFS";
 ;; testable
 (cell) caesar_cipher_encrypt(int shift, cell text) method_id {
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug fot task 3
-  return text;
+  return tuple_to_linked_list(linked_list_to_tuple(text));
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug for task 3
 
   ;; return caesar_helper(shift, text, -1);
@@ -96,3 +96,39 @@ int slice_refs(slice s) asm "SREFS";
 ;; ;; https://docs.ton.org/develop/func/statements#operators
 ;; ;; https://docs.ton.org/develop/smart-contracts/fees#how-to-calculate-fees
 ;; ;; https://docs.ton.org/develop/howto/fees-low-level#computation-fees
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug fot task 3
+(tuple) linked_list_to_tuple(cell linked_list) method_id {
+  tuple tp = empty_tuple();
+  while(-1){
+    slice cs = linked_list.begin_parse();
+    slice cs_only_data = cs.preload_bits(cs.slice_bits());
+    tp~tpush(cs_only_data);
+
+    if(cs.slice_refs_empty?()){
+      return tp;
+    } else {
+      linked_list = cs~load_ref();
+    }
+  }
+  return tp; ;; added to disable compiler error (debug)
+}
+
+(cell) tuple_to_linked_list(tuple tp) method_id {
+  slice last_cs = tp~tpop();
+  cell linked_list = begin_cell()
+                   .store_slice(last_cs)
+                   .end_cell();
+  while(tp.tuple_length() > 0){
+    last_cs = tp~tpop();
+    linked_list = begin_cell()
+                  .store_slice(last_cs)
+                  .store_ref(linked_list)
+                  .end_cell();
+  }
+  return linked_list;
+}
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug fot task 3
