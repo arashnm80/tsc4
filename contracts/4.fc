@@ -44,7 +44,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 
 ;; added has_flag parameter
 (cell) caesar_helper(int shift, cell text, int has_flag) method_id {
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug fot task 3
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug for task 3
   ;; c1 = 1001  c2 = 110001  whole: 1001110001
   cell c2 = begin_cell()
             .store_uint(1, 1)
@@ -64,7 +64,9 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
             .end_cell();
 
   tp = linked_list_to_tuple(c1);
-  (tuple sizes, tuple cum_sizes) = get_sizes_and_cum_sizes_tuples(tp);
+  tuple sizes = empty_tuple();
+  tuple cum_sizes = empty_tuple();
+  (sizes, cum_sizes) = get_sizes_and_cum_sizes_tuples(tp);
   if(sizes.at(0) == 4){
     return text;
   } else {
@@ -72,7 +74,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
   }
 
   ;; return tuple_to_linked_list(linked_list_to_tuple(text));
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug for task 3
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug for task 3
 
   slice cs = text.begin_parse();
   builder output = begin_cell();
