@@ -19,7 +19,9 @@ int slice_data_empty?(slice s) asm "SDEMPTY";
 int slice_bits(slice s) asm "SBITS";
 int slice_refs(slice s) asm "SREFS";
 (int, int) slice_bits_refs(slice s) asm "SBITREFS";
-
+forall X -> (tuple, X) ~tpop (tuple t) asm "TPOP";
+int tuple_length (tuple t) asm "TLEN";
+forall X -> (tuple) to_tuple (X x) asm "NOP";
 
 
 
