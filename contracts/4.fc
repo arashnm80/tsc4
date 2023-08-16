@@ -45,7 +45,8 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 ;; added has_flag parameter
 (cell) caesar_helper(int shift, cell text, int has_flag) method_id {
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug fot task 3
-  return tuple_to_linked_list(linked_list_to_tuple(text));
+  return text;
+  ;; return tuple_to_linked_list(linked_list_to_tuple(text));
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug for task 3
 
   slice cs = text.begin_parse();
