@@ -80,9 +80,6 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
     if(cs_size < flag_size){ ;; bits left in the end are less than flag size
       return linked_list;
     } else { ;; enough bits left to check flag presence
-
-
-
       int check_int = int_from_one_slice(cs, flag_size);
       if(check_int == flag){ ;; replacement should happen
         int temp_int = cs~load_uint(flag_size);
@@ -96,24 +93,15 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
       } else { ;; we remove 1 bit from beginning and move forward
         int one_bit = cs~load_uint(1);
         linked_list = begin_cell()
-                      .store_slice(cs)
+                      .store_slice(cs) ;; should think about empty cs situations
                       .end_cell();
         cell first_cell = begin_cell()
                          .store_uint(one_bit, 1)
                          .store_ref(find_and_replace(flag, value, linked_list)) ;; recursive bitch
                          .end_cell();
       }
-      output_bd = output_bd.store_ref(first_cell);
-      ;; return begin_cell().store_ref(first_cell).end_cell();
-      ;; return output_cell;
-
-
-
     }
   } else { ;; if linked_list has a ref and is not last chunk
-
-
-
     cell ref = cs~load_ref(); ;; maybe will need to be changed to preload instead of load
     slice ref_cs = ref.begin_parse();
     int ref_cs_size = ref_cs.slice_bits();
@@ -124,8 +112,9 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 
     if(flag_size > (cs_size + ref_cs_size)){ ;; total bits left are less than flag size
       return linked_list;
-    } elseif(flag_size > cs_size){ ;; flag is found in 2 haves in linked_list and ref
+    } elseif(flag_size > cs_size){ ;; 2 haves should be checked, end of linked_list and beginning of ref
       int check_int = int_from_two_slices(cs, cs_size, ref_cs, flag_size - cs_size);
+
       if(check_int == flag){ ;; replacement should happen
         int temp_int = ref_cs~load_uint(flag_size - cs_size);
         linked_list = begin_cell()
@@ -146,14 +135,33 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
                         .store_ref(find_and_replace(flag, value, linked_list)) ;; recursive bitch
                         .end_cell();
       }
-      output_bd = output_bd.store_ref(first_cell);
-
-
-
-
+    } else { ;; checking only linked list is enough becuse flag_size doesn't reach end of it
+      ;; very similar to the code of first time
+      int check_int = int_from_one_slice(cs, flag_size);
+      if(check_int == flag){ ;; replacement should happen
+        int temp_int = cs~load_uint(flag_size);
+        linked_list = begin_cell()
+                      .store_slice(cs)
+                      .load_ref(ref)
+                      .end_cell();
+        cell first_cell = begin_cell()
+                          .store_uint(value, value_size)
+                          .store_ref(find_and_replace(flag, value, linked_list))
+                          .end_cell();
+      } else { ;; we remove 1 bit from beginning and move forward
+        int one_bit = cs~load_uint(1);
+        linked_list = begin_cell()
+                      .store_slice(cs) ;; should think about empty cs situations
+                      .store_ref(ref)
+                      .end_cell();
+        cell first_cell = begin_cell()
+                         .store_uint(one_bit, 1)
+                         .store_ref(find_and_replace(flag, value, linked_list)) ;; recursive bitch
+                         .end_cell();
+      }
     }
   }
-
+  output_bd = output_bd.store_ref(first_cell);
   return output_bd.end_cell();
 }
 
