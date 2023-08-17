@@ -54,9 +54,6 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 ;; 2nd try (after clarifications)
 ;; testable
 (cell) find_and_replace(int flag, int value, cell linked_list) method_id {
-  ;; builder output_bd = begin_cell();
-  ;; builder first_cell = begin_cell();
-  ;; builder next_cell = begin_cell();
   int remove_int = 0;
   int remove_int_size = 0;
   int replace_int = 0;
@@ -83,21 +80,23 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
       return linked_list;
     } else { ;; enough bits left to check flag presence
       int check_int = int_from_one_slice(cs, flag_size);
+
       if(check_int == flag){ ;; replacement should happen
-        int temp_int = cs~load_uint(flag_size);
-        cell next_cell = begin_cell().store_slice(cs).end_cell();
-        return begin_cell()
-               .store_uint(value, value_size)
-               .store_ref(find_and_replace(flag, value, next_cell))
-               .end_cell();
+        remove_int_size = flag_size;
+        replace_int_size = value_size;
+        remove_int = cs~load_uint(remove_int_size);
+        replace_int = value;
       } else { ;; we remove 1 bit from beginning and move forward
-        int one_bit = cs~load_uint(1);
+        remove_int_size = 1;
+        replace_int_size = 1;
+        remove_int = cs~load_uint(remove_int_size);
+        replace_int = remove_int;
+      }
         cell next_cell = begin_cell().store_slice(cs).end_cell();
         return begin_cell()
-               .store_uint(one_bit, 1)
+               .store_uint(replace_int, replace_int_size)
                .store_ref(find_and_replace(flag, value, next_cell))
                .end_cell();
-      }
     }
 
   } else { ;; if linked_list has a ref and is not last chunk
@@ -148,9 +147,6 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
   }
 
   return begin_cell().end_cell(); ;; just to silence the compiler
-  ;; return first_cell;
-  ;; output_bd = output_bd.store_ref(first_cell);
-  ;; return output_bd.end_cell();
 }
 
 
