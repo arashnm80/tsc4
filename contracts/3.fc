@@ -146,7 +146,8 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
                         .store_ref(find_and_replace(flag, value, linked_list)) ;; recursive bitch
                         .end_cell();
       }
-      output_bd = output_bd.store_ref(first_cell);
+      ;; output_bd = output_bd.store_ref(first_cell);
+      return begin_cell().store_ref(first_cell).end_cell();
 
 
 
