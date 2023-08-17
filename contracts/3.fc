@@ -116,18 +116,29 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
       int check_int = int_from_two_slices(cs, cs_size, ref_cs, flag_size - cs_size);
       if(check_int == flag){ ;; replacement should happen
         int temp_int = ref_cs~load_uint(flag_size - cs_size);
-        cell next_cell = begin_cell().store_slice(ref_cs).end_cell();
-        return begin_cell()
-               .store_uint(value, value_size)
-               .store_ref(find_and_replace(flag, value, next_cell))
-               .end_cell();
+        if(ref_cs.slice_bits() > 0){
+          cell next_cell = begin_cell().store_slice(ref_cs).end_cell();
+          return begin_cell()
+                 .store_uint(value, value_size)
+                 .store_ref(find_and_replace(flag, value, next_cell))
+                 .end_cell();
+        } else {
+          return begin_cell()
+                 .store_uint(value, value_size)
+                 .end_cell();
+        }
       } else { ;; we remove 1 bit from beginning and move forward
         int one_bit = cs~load_uint(1);
-        cell next_cell = begin_cell().store_slice(cs).store_ref(ref).end_cell();
+        cell next_cell = null(); ;; check later for better replace
+        if(cs.slice_bits() > 0){
+          next_cell = begin_cell().store_slice(cs).store_ref(ref).end_cell();
+        } else {
+          next_cell = ref;
+        }
         return begin_cell()
-               .store_uint(one_bit, 1)
-               .store_ref(find_and_replace(flag, value, next_cell))
-               .end_cell();
+                .store_uint(one_bit, 1)
+                .store_ref(find_and_replace(flag, value, next_cell))
+                .end_cell();
       }
 
     } else { ;; checking only linked list is enough becuse flag_size doesn't reach end of it
