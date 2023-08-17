@@ -142,7 +142,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
         int temp_int = cs~load_uint(flag_size);
         linked_list = begin_cell()
                       .store_slice(cs)
-                      .load_ref(ref)
+                      .store_ref(ref)
                       .end_cell();
         cell first_cell = begin_cell()
                           .store_uint(value, value_size)
