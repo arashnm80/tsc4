@@ -80,7 +80,6 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
       return linked_list;
     } else { ;; enough bits left to check flag presence
       int check_int = int_from_one_slice(cs, flag_size);
-
       if(check_int == flag){ ;; replacement should happen
         remove_int_size = flag_size;
         replace_int_size = value_size;
@@ -92,11 +91,11 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
         remove_int = cs~load_uint(remove_int_size);
         replace_int = remove_int;
       }
-        cell next_cell = begin_cell().store_slice(cs).end_cell();
-        return begin_cell()
-               .store_uint(replace_int, replace_int_size)
-               .store_ref(find_and_replace(flag, value, next_cell))
-               .end_cell();
+      cell next_cell = begin_cell().store_slice(cs).end_cell();
+      return begin_cell()
+              .store_uint(replace_int, replace_int_size)
+              .store_ref(find_and_replace(flag, value, next_cell))
+              .end_cell();
     }
 
   } else { ;; if linked_list has a ref and is not last chunk
