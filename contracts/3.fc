@@ -55,7 +55,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 ;; testable
 (cell) find_and_replace(int flag, int value, cell linked_list) method_id {
   builder output_bd = begin_cell();
-  cell first_cell = begin_cell();
+  cell first_cell = begin_cell().end_cell();
 
   int flag_size = int_bits(flag);
   int value_size = int_bits(value);
