@@ -67,14 +67,14 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
   slice cs = linked_list.begin_parse();
   int cs_size = cs.slice_bits();
 
-  if(cs_size == 0){ ;; has become empty
-    if(cs.slice_refs_empty?()){
-      return begin_cell().end_cell();
-    } else {
-      cell ref = cs~load_ref();
-      return find_and_replace(flag, value, ref);
-    }
-  }
+  ;; if(cs_size == 0){ ;; has become empty
+  ;;   if(cs.slice_refs_empty?()){
+  ;;     return begin_cell().end_cell();
+  ;;   } else {
+  ;;     cell ref = cs~load_ref();
+  ;;     return find_and_replace(flag, value, ref);
+  ;;   }
+  ;; }
 
   if(cs.slice_refs_empty?()){ ;; if doesn't have any refs so this is last chunk
 
