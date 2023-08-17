@@ -101,7 +101,8 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
                          .end_cell();
       }
       ;; output_bd = output_bd.store_ref(next_cell); ;; gives compile error
-      return begin_cell().store_ref(next_cell).end_cell();
+      cell output_cell = begin_cell().store_ref(next_cell).end_cell();
+      return output_cell;
     }
   } else { ;; if linked_list has a ref and is not last chunk
     cell ref = cs~load_ref(); ;; maybe will need to be changed to preload instead of load
