@@ -64,7 +64,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 
   if(cs_size == 0){ ;; has become empty
     if(cs.slice_refs_empty?()){
-      
+      return begin_cell().end_cell();
     } else {
       cell ref = cs~load_ref();
       return ref;
