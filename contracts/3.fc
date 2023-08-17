@@ -91,11 +91,17 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
         remove_int = cs~load_uint(remove_int_size);
         replace_int = remove_int;
       }
-      cell next_cell = begin_cell().store_slice(cs).end_cell();
-      return begin_cell()
-              .store_uint(replace_int, replace_int_size)
-              .store_ref(find_and_replace(flag, value, next_cell))
-              .end_cell();
+      if(cs.slice_bits() > 0){
+        cell next_cell = begin_cell().store_slice(cs).end_cell();
+        return begin_cell()
+                .store_uint(replace_int, replace_int_size)
+                .store_ref(find_and_replace(flag, value, next_cell))
+                .end_cell();
+      } else {
+        return begin_cell()
+                .store_uint(replace_int, replace_int_size)
+                .end_cell();
+      }
     }
 
   } else { ;; if linked_list has a ref and is not last chunk
@@ -206,6 +212,41 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
   return count;
 }
 
+
+(cell) one_chunk_single_run(int flag, int value, cell linked_list) method_id {
+  int remove_int = 0;
+  int remove_int_size = 0;
+  int replace_int = 0;
+  int replace_int_size = 0;
+
+  int flag_size = int_bits(flag);
+  int value_size = int_bits(value);
+
+  slice cs = linked_list.begin_parse();
+  int cs_size = cs.slice_bits();
+
+  if(cs_size < flag_size){
+    return linked_list;
+  } else {
+    int check_int = int_from_one_slice(cs, flag_size);
+    if(check_int == flag){ ;; replacement should happen
+      remove_int_size = flag_size;
+      replace_int_size = value_size;
+      remove_int = cs~load_uint(remove_int_size);
+      replace_int = value;
+    } else { ;; we remove 1 bit from beginning and move forward
+      remove_int_size = 1;
+      replace_int_size = 1;
+      remove_int = cs~load_uint(remove_int_size);
+      replace_int = remove_int;
+    }
+    cell next_cell = begin_cell().store_slice(cs).end_cell();
+    return begin_cell()
+            .store_uint(replace_int, replace_int_size)
+            .store_ref(find_and_replace(flag, value, next_cell))
+            .end_cell();
+  }
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; helper functions:
 
 ;; (slice) int_to_slice(int n, int n_size) method_id {
