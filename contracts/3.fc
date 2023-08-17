@@ -77,7 +77,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
       return output_bd.end_cell();
     }
 
-    if(cs_size > flag_size){ ;; bits left in the end are less than flag size
+    if(cs_size < flag_size){ ;; bits left in the end are less than flag size
       return linked_list;
     } else { ;; enough bits left to check flag presence
 
@@ -147,7 +147,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
                         .end_cell();
       }
       output_bd = output_bd.store_ref(first_cell);
-      ;; return begin_cell().store_ref(first_cell).end_cell();
+
 
 
 
@@ -320,7 +320,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 ;;   ;; slice ouput_slice = output_builder
 ;;   ;;                     .end_cell()
 ;;   ;;                     .begin_parse();
-;;   ;; return (tp, output_slice);
+;;   ;; return (tp, output_slice); ;; of course, you wrote output_slice and ouput_slice idiot :)))
 ;; }
 
 ;; (tuple) linked_list_to_tuple(cell linked_list) method_id {
