@@ -54,7 +54,6 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 ;; 2nd try (after clarifications)
 ;; testable
 (cell) find_and_replace(int flag, int value, cell linked_list) method_id {
-  return begin_cell().end_cell(); ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
 
   builder output_bd = begin_cell();
   cell first_cell = begin_cell().end_cell();
@@ -66,6 +65,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
   int cs_size = cs.slice_bits();
 
   if(cs_size == 0){ ;; has become empty
+  return begin_cell().end_cell(); ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug
     if(cs.slice_refs_empty?()){
       return begin_cell().end_cell();
     } else {
