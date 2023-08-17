@@ -77,16 +77,18 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
     }
 
     if(cs_size > flag_size){ ;; bits left in the end are less than flag size
-      ;; output_bd.store_ref(linked_list); ;; or maybe return link_list ??????????
       return linked_list;
-    } else {
+    } else { ;; enough bits left to check flag presence
+
+
+
       int check_int = int_from_one_slice(cs, flag_size);
       if(check_int == flag){ ;; replacement should happen
         int temp_int = cs~load_uint(flag_size);
         linked_list = begin_cell()
                       .store_slice(cs)
                       .end_cell();
-        cell next_cell = begin_cell()
+        cell first_cell = begin_cell()
                           .store_uint(value, value_size)
                           .store_ref(find_and_replace(flag, value, linked_list))
                           .end_cell();
@@ -95,16 +97,22 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
         linked_list = begin_cell()
                       .store_slice(cs)
                       .end_cell();
-        cell next_cell = begin_cell()
+        cell first_cell = begin_cell()
                          .store_uint(one_bit, 1)
                          .store_ref(find_and_replace(flag, value, linked_list)) ;; recursive bitch
                          .end_cell();
       }
-      ;; output_bd = output_bd.store_ref(next_cell); ;; gives compile error
-      cell output_cell = begin_cell().store_ref(next_cell).end_cell();
+      ;; output_bd = output_bd.store_ref(first_cell); ;; gives compile error
+      return begin_cell().store_ref(first_cell).end_cell();
       return output_cell;
+
+
+
     }
   } else { ;; if linked_list has a ref and is not last chunk
+
+
+
     cell ref = cs~load_ref(); ;; maybe will need to be changed to preload instead of load
     slice ref_cs = ref.begin_parse();
     int ref_cs_size = ref_cs.slice_bits();
@@ -122,7 +130,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
         linked_list = begin_cell()
                       .store_slice(ref_cs)
                       .end_cell();
-        cell next_cell = begin_cell()
+        cell first_cell = begin_cell()
                          .store_uint(value, value_size)
                          .store_ref(find_and_replace(flag, value, linked_list))
                          .end_cell();
@@ -132,12 +140,15 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
                       .store_slice(cs)
                       .store_ref(ref)
                       .end_cell();
-        cell next_cell = begin_cell()
+        cell first_cell = begin_cell()
                         .store_uint(one_bit, 1)
                         .store_ref(find_and_replace(flag, value, linked_list)) ;; recursive bitch
                         .end_cell();
       }
-      output_bd = output_bd.store_ref(next_cell);
+      output_bd = output_bd.store_ref(first_cell);
+
+
+
     }
   }
 
