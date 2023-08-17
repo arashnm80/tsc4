@@ -100,7 +100,8 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
                          .store_ref(find_and_replace(flag, value, linked_list)) ;; recursive bitch
                          .end_cell();
       }
-      output_bd = output_bd.store_ref(next_cell);
+      ;; output_bd = output_bd.store_ref(next_cell); ;; gives compile error
+      return begin_cell().store_ref(next_cell).end_cell();
     }
   } else { ;; if linked_list has a ref and is not last chunk
     cell ref = cs~load_ref(); ;; maybe will need to be changed to preload instead of load
@@ -191,8 +192,6 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
   return combination_out_int;
 }
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; helper functions:
-
 (int) int_bits(int n) method_id {
   int count = 0;
   while (n > 0) {
@@ -201,6 +200,8 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
   }
   return count;
 }
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; helper functions:
 
 ;; (slice) int_to_slice(int n, int n_size) method_id {
 ;;   slice output = begin_cell()
