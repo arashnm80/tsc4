@@ -54,6 +54,8 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 ;; 2nd try (after clarifications)
 ;; testable
 (cell) find_and_replace(int flag, int value, cell linked_list) method_id {
+  cell next_cell = null();
+
   int remove_int = 0;
   int remove_int_size = 0;
   int replace_int = 0;
@@ -129,7 +131,6 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
         }
       } else { ;; we remove 1 bit from beginning and move forward
         int one_bit = cs~load_uint(1);
-        cell next_cell = null(); ;; check later for better replace
         if(cs.slice_bits() > 0){
           next_cell = begin_cell().store_slice(cs).store_ref(ref).end_cell();
         } else {
@@ -154,7 +155,11 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
         remove_int = cs~load_uint(remove_int_size);
         replace_int = remove_int;
       }
-      cell next_cell = begin_cell().store_slice(cs).store_ref(ref).end_cell();
+      if(cs.slice_bits() > 0){
+        next_cell = begin_cell().store_slice(cs).store_ref(ref).end_cell();
+      } else {
+        next_cell = ref;
+      }
       return begin_cell()
               .store_uint(replace_int, replace_int_size)
               .store_ref(find_and_replace(flag, value, next_cell))
