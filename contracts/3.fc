@@ -147,7 +147,8 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
     }
   }
 
-  return first_cell;
+  return begin_cell().end_cell(); ;; just to silence the compiler
+  ;; return first_cell;
   ;; output_bd = output_bd.store_ref(first_cell);
   ;; return output_bd.end_cell();
 }
