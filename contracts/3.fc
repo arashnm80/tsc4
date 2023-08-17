@@ -105,7 +105,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
       }
       ;; output_bd = output_bd.store_ref(first_cell); ;; gives compile error
       return begin_cell().store_ref(first_cell).end_cell();
-      return output_cell;
+      ;; return output_cell;
 
 
 
