@@ -1,20 +1,33 @@
-;; {- 
-;;   TASK 3 - Find and replace binary substring
-;;   Binary string is represented as a cell linked list: string splitted to chunks,
-;;   first chunk stored to the root cell, next one to the cell in ref and so on;
-;;   each cell can have only one ref. 
-;;   Write the method that find and replaces one flags in the binary string
-;;   with another value. Flags and values can be can be of any length, but
-;;   strictly up to 128 bits. The method must replace every flag it finds.
-;;   Flag and the value to be replaced is guaranteed to be greater than 0.
-;;   Lets give a simple example. We have the target flag 101110101 and the value
-;;   to be written 111111111 as inputs, and a linked list of cells, in which the bit
-;;   value of the first cell ends with ...10100001011, and in the ref we have cell that
-;;   starts with 10101000111111...
-;;   The output should be a linked list where the first
-;;   cell ends with ...10100001111, and the second cell starts with 11111000111111...
+{- 
+  TASK 3 - Find and replace binary substring
+  Binary string is represented as a cell linked list: string splitted to chunks,
+  first chunk stored to the root cell, next one to the cell in ref and so on;
+  each cell can have only one ref.
+  Write the method that find and replaces one flags in the binary string
+  with another value. Flags and values can be can be of any length, but
+  strictly up to 128 bits. The method must replace every flag it finds.
+  Flag and the value to be replaced is guaranteed to be greater than 0.
+  Flag and the value may be of different lengths.
+  When there are overlapping flags, only the first one
+  from the overlap needs to be replaced (for example, if the flag is 101,
+  value is 111, and string is 10101, then the result would be 11101, but if
+  the string is 1010101, then the result would be 1110111).
+  Every cell in the input linked list, except for the last one
+  (the one that is the deepest in the tree), is guaranteed to be full
+  (guaranteed to contain 1023 bits).
+  The requirements on the output cell are more loose - only the concatenation of bits
+  from the linked list needs to match that of the expected answer, but the structure
+  itself may be different (for example, for the purposes of comparing the answer,
+  a cell with bit 1 and a ref containing bits 10 is the same as a cell containing
+  bit 11 and a ref with bit 0 - they both make up a bitstring 110).
+  Lets give a simple example. We have the target flag 101110101 and the value
+  to be written 111111111 as inputs, and a linked list of cells, in which the bit
+  value of the first cell ends with ...10100001011, and in the ref we have cell that
+  starts with 10101000111111...
+  The output should be a linked list where the first
+  cell ends with ...10100001111, and the second cell starts with 11111000111111...
 
-;; -}
+-}
 ;; ;; target          endWith    startWith         
 ;; ;; 101110101       1010000101110101000111111
 ;; ;; 111111111       1010000111111111000111111
@@ -38,46 +51,149 @@ forall X -> (tuple, X) ~tpop (tuple t) asm "TPOP";
 int tuple_length (tuple t) asm "TLEN";
 forall X -> (tuple) to_tuple (X x) asm "NOP";
 
-
-
+;; 2nd try (after clarifications)
 ;; testable
 (cell) find_and_replace(int flag, int value, cell linked_list) method_id {
-  tuple tp = linked_list_to_tuple(linked_list);
-  (tuple sizes, tuple cum_sizes) = get_sizes_and_cum_sizes_tuples(tp);
-  int total_size = cum_sizes.at(tp.tuple_length() - 1);
-  int flag_size = count_bits(flag);
+  builder output_bd = begin_cell();
 
-  int i = 0;
-  while(i <= (total_size - flag_size)){
-    slice empty_slice = "";
-    ;; get slice at index i
-    (tuple temp_tp, slice check) = get_or_set_slice_in_tuple(i, 0, empty_slice, tp, sizes, cum_sizes);
-    int int_from_check = check~load_uint(flag_size);
-    if(flag == int_from_check){
-      slice value_to_slice = int_to_slice(value, flag_size);
-      ;; set value as a replacement for flag
-      (tp, slice temp_slice) = get_or_set_slice_in_tuple(i, -1, value_to_slice, tp, sizes, cum_sizes);
-      i += flag_size;
+  int flag_size = int_bits(flag);
+  int value_size = int_bits(value);
+
+  slice cs = linked_list.begin_parse();
+  int cs_size = cs.slice_bits();
+
+  if(cs_size == 0){ ;; has become empty
+    if(cs.slice_refs_empty?()){
+      
     } else {
-      i += 1;
+      cell ref = cs~load_ref();
+      return ref;
     }
   }
 
-  cell output_linked_list = tuple_to_linked_list(tp);
-  return output_linked_list;
+  if(cs.slice_refs_empty?()){ ;; if doesn't have any refs so this is last chunk
+    if(cs_size == 0){ ;; we have checked to the last bit of last chunk
+      return output_bd.end_cell();
+    }
+
+    if(cs_size > flag_size){ ;; bits left in the end are less than flag size
+      ;; output_bd.store_ref(linked_list); ;; or maybe return link_list ??????????
+      return linked_list;
+    } else {
+      int check_int = int_from_one_slice(cs, flag_size);
+      if(check_int == flag){ ;; replacement should happen
+        int temp_int = cs~load_uint(flag_size);
+        linked_list = begin_cell()
+                      .store_slice(cs)
+                      .end_cell();
+        cell next_cell = begin_cell()
+                          .store_uint(value, value_size)
+                          .store_ref(find_and_replace(flag, value, linked_list))
+                          .end_cell();
+      } else { ;; we remove 1 bit from beginning and move forward
+        int one_bit = cs~load_uint(1);
+        linked_list = begin_cell()
+                      .store_slice(cs)
+                      .end_cell();
+        cell next_cell = begin_cell()
+                         .store_uint(one_bit, 1)
+                         .store_ref(find_and_replace(flag, value, linked_list)) ;; recursive bitch
+                         .end_cell();
+      }
+      output_bd = output_bd.store_ref(next_cell);
+    }
+  } else { ;; if linked_list has a ref and is not last chunk
+    cell ref = cs~load_ref(); ;; maybe will need to be changed to preload instead of load
+    slice ref_cs = ref.begin_parse();
+    int ref_cs_size = ref_cs.slice_bits();
+
+    if(cs_size == 0){ ;; first part has become empty
+      return ref;
+    }
+
+    if(flag_size > (cs_size + ref_cs_size)){ ;; total bits left are less than flag size
+      return linked_list;
+    } elseif(flag_size > cs_size){ ;; flag is found in 2 haves in linked_list and ref
+      int check_int = int_from_two_slices(cs, cs_size, ref_cs, flag_size - cs_size);
+      if(check_int == flag){ ;; replacement should happen
+        int temp_int = ref_cs~load_uint(flag_size - cs_size);
+        linked_list = begin_cell()
+                      .store_slice(ref_cs)
+                      .end_cell();
+        cell next_cell = begin_cell()
+                         .store_uint(value, value_size)
+                         .store_ref(find_and_replace(flag, value, linked_list))
+                         .end_cell();
+      } else { ;; we remove 1 bit from beginning and move forward
+        int one_bit = cs~load_uint(1);
+        linked_list = begin_cell()
+                      .store_slice(cs)
+                      .store_ref(ref)
+                      .end_cell();
+        cell next_cell = begin_cell()
+                        .store_uint(one_bit, 1)
+                        .store_ref(find_and_replace(flag, value, linked_list)) ;; recursive bitch
+                        .end_cell();
+      }
+      output_bd = output_bd.store_ref(next_cell);
+    }
+  }
+
+  return output_bd.end_cell();
+}
+
+
+;; ;; first try (before clarifications)
+;; ;; testable
+;; (cell) find_and_replace(int flag, int value, cell linked_list) method_id {
+;;   tuple tp = linked_list_to_tuple(linked_list);
+;;   (tuple sizes, tuple cum_sizes) = get_sizes_and_cum_sizes_tuples(tp);
+;;   int total_size = cum_sizes.at(tp.tuple_length() - 1);
+;;   int flag_size = int_bits(flag);
+
+;;   int i = 0;
+;;   while(i <= (total_size - flag_size)){
+;;     slice empty_slice = "";
+;;     ;; get slice at index i
+;;     (tuple temp_tp, slice check) = get_or_set_slice_in_tuple(i, 0, empty_slice, tp, sizes, cum_sizes);
+;;     int int_from_check = check~load_uint(flag_size);
+;;     if(flag == int_from_check){
+;;       slice value_to_slice = int_to_slice(value, flag_size);
+;;       ;; set value as a replacement for flag
+;;       (tp, slice temp_slice) = get_or_set_slice_in_tuple(i, -1, value_to_slice, tp, sizes, cum_sizes);
+;;       i += flag_size;
+;;     } else {
+;;       i += 1;
+;;     }
+;;   }
+
+;;   cell output_linked_list = tuple_to_linked_list(tp);
+;;   return output_linked_list;
+;; }
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; new helper functions:
+
+;; parameters should be checked before passing
+(int) int_from_one_slice(slice cs, int int_size) method_id {
+  int output = cs~load_uint(int_size); ;; maybe could be changed to preload later to reduce gas
+  return output;
+}
+
+(int) int_from_two_slices(slice cs1, int int_size_1, slice cs2, int int_size_2) method_id {
+  int out1 = cs1~load_uint(int_size_1);
+  int out2 = cs2~load_uint(int_size_2);
+  cell combination_cell = begin_cell()
+                          .store_uint(out1, int_size_1)
+                          .store_uint(out2, int_size_2)
+                          .end_cell();
+  slice combination_cs = combination_cell.begin_parse();
+  int combination_out_int = combination_cs~load_uint(int_size_1 + int_size_2);
+  return combination_out_int;
 }
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; helper functions:
 
-(slice) int_to_slice(int n, int n_size) method_id {
-  slice output = begin_cell()
-                  .store_uint(n, n_size)
-                  .end_cell()
-                  .begin_parse();
-  return output;
-}
-
-(int) count_bits(int n) method_id {
+(int) int_bits(int n) method_id {
   int count = 0;
   while (n > 0) {
       count += 1;
@@ -86,134 +202,142 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
   return count;
 }
 
-;; first: sizes, second: cum_sizes
-(tuple, tuple) get_sizes_and_cum_sizes_tuples(tuple tp) method_id {
-  tuple sizes = empty_tuple();
-  tuple cum_sizes = empty_tuple();
-  int i = 0;
-  while(i < tp.tuple_length()){
-    sizes~tpush(tp.at(i).slice_bits());
-    if(i == 0){
-      cum_sizes~tpush(sizes.at(0));
-    } else {
-      cum_sizes~tpush(cum_sizes.at(i - 1) + sizes.at(i));
-    }
-  }
-  return (sizes, cum_sizes);
-}
+;; (slice) int_to_slice(int n, int n_size) method_id {
+;;   slice output = begin_cell()
+;;                   .store_uint(n, n_size)
+;;                   .end_cell()
+;;                   .begin_parse();
+;;   return output;
+;; }
 
-;; job = -1 for set and 0 for get, leave value = 0 when doesn't exist
-(slice, int) get_or_set_bit_in_slice(int i, int job, int int_value, slice cs) method_id {
-  builder output_builder = begin_cell();
-  int output_int = 0;
+;; ;; first: sizes, second: cum_sizes
+;; (tuple, tuple) get_sizes_and_cum_sizes_tuples(tuple tp) method_id {
+;;   tuple sizes = empty_tuple();
+;;   tuple cum_sizes = empty_tuple();
+;;   int i = 0;
+;;   while(i < tp.tuple_length()){
+;;     sizes~tpush(tp.at(i).slice_bits());
+;;     if(i == 0){
+;;       cum_sizes~tpush(sizes.at(0));
+;;     } else {
+;;       cum_sizes~tpush(cum_sizes.at(i - 1) + sizes.at(i));
+;;     }
+;;   }
+;;   return (sizes, cum_sizes);
+;; }
+
+;; ;; job = -1 for set and 0 for get, leave value = 0 when doesn't exist
+;; (slice, int) get_or_set_bit_in_slice(int i, int job, int int_value, slice cs) method_id {
+;;   builder output_builder = begin_cell();
+;;   int output_int = 0;
   
-  int j = 0; 
-  int cs_size = cs.slice_bits();
-  while(j < cs_size){
-    int read_int = cs~load_uint(1);
-    if(j == i){
-      if(job == -1){
-        output_int = int_value;
-      } else {
-        output_int = read_int;
-      }
-      output_builder = output_builder.store_uint(output_int, 1);
-    }
-    output_builder = output_builder.store_uint(read_int, 1);
-  }
+;;   int j = 0; 
+;;   int cs_size = cs.slice_bits();
+;;   while(j < cs_size){
+;;     int read_int = cs~load_uint(1);
+;;     if(j == i){
+;;       if(job == -1){
+;;         output_int = int_value;
+;;       } else {
+;;         output_int = read_int;
+;;       }
+;;       output_builder = output_builder.store_uint(output_int, 1);
+;;     }
+;;     output_builder = output_builder.store_uint(read_int, 1);
+;;   }
 
-  slice output_slice = output_builder.end_cell().begin_parse();
-  return (output_slice, output_int);
-}
+;;   slice output_slice = output_builder.end_cell().begin_parse();
+;;   return (output_slice, output_int);
+;; }
 
-;; job = -1 for set and 0 for get, leave value = 0 when doesn't exist
-(tuple, int) get_or_set_bit_in_tuple(int i, int job, int int_value, tuple tp, tuple sizes, tuple cum_sizes) method_id {
-  tuple output_tp = empty_tuple();
-  int output_int = 0;
+;; ;; job = -1 for set and 0 for get, leave value = 0 when doesn't exist
+;; (tuple, int) get_or_set_bit_in_tuple(int i, int job, int int_value, tuple tp, tuple sizes, tuple cum_sizes) method_id {
+;;   tuple output_tp = empty_tuple();
+;;   int output_int = 0;
 
-  int chunk_i = 0;
-  while(i > cum_sizes.at(chunk_i)){
-    output_tp~tpush(tp.at(chunk_i));
-    chunk_i += 1;
-  }
+;;   int chunk_i = 0;
+;;   while(i > cum_sizes.at(chunk_i)){
+;;     output_tp~tpush(tp.at(chunk_i));
+;;     chunk_i += 1;
+;;   }
 
-  int j = sizes.at(chunk_i) - (cum_sizes.at(chunk_i) - i);
-  slice target_chunk = tp.at(chunk_i);
-  (target_chunk, output_int) = get_or_set_bit_in_slice(j, job, int_value, target_chunk); ;; job from parameters specifies being a get or set
-  output_tp~tpush(target_chunk);
+;;   int j = sizes.at(chunk_i) - (cum_sizes.at(chunk_i) - i);
+;;   slice target_chunk = tp.at(chunk_i);
+;;   (target_chunk, output_int) = get_or_set_bit_in_slice(j, job, int_value, target_chunk); ;; job from parameters specifies being a get or set
+;;   output_tp~tpush(target_chunk);
 
-  chunk_i += 1;
-  while(chunk_i < tp.tuple_length()){
-    output_tp~tpush(tp.at(chunk_i));
-    chunk_i += 1;
-  }
+;;   chunk_i += 1;
+;;   while(chunk_i < tp.tuple_length()){
+;;     output_tp~tpush(tp.at(chunk_i));
+;;     chunk_i += 1;
+;;   }
 
-  return (output_tp, output_int);
-}
+;;   return (output_tp, output_int);
+;; }
 
-;; job = -1 for set and 0 for get, leave value = 0 when doesn't exist
-(tuple, slice) get_or_set_slice_in_tuple(int i, int job, slice slice_value, tuple tp, tuple sizes, tuple cum_sizes) method_id {
-  builder output_builder = begin_cell();
+;; ;; job = -1 for set and 0 for get, leave value = 0 when doesn't exist
+;; (tuple, slice) get_or_set_slice_in_tuple(int i, int job, slice slice_value, tuple tp, tuple sizes, tuple cum_sizes) method_id {
+;;   builder output_builder = begin_cell();
 
-  int total_size = cum_sizes.at(tp.tuple_length() - 1);
-  int slice_value_size = slice_value.slice_bits();
+;;   int total_size = cum_sizes.at(tp.tuple_length() - 1);
+;;   int slice_value_size = slice_value.slice_bits();
 
-  int j = 0;
-  while(j < total_size){
-    if((j >= i) & (j < i + slice_value_size)){
-      int k = j - i;
-      int read_int = 0;
-      if(job == -1){
-        (_, read_int) = get_or_set_bit_in_slice(k, 0, 0, slice_value); ;; get bit k from slice_value
-        (tp, _) = get_or_set_bit_in_tuple(j, -1, read_int, tp, sizes, cum_sizes); ;; set read_int to bit j in tp
-      } else {
-        (_, read_int) = get_or_set_bit_in_tuple(j, 0, 0, tp, sizes, cum_sizes); ;; get bit j from tp
-      }
-      output_builder.store_uint(read_int, 1);
-    }
-    j += 1;
-  }
+;;   int j = 0;
+;;   while(j < total_size){
+;;     if((j >= i) & (j < i + slice_value_size)){
+;;       int k = j - i;
+;;       int read_int = 0;
+;;       if(job == -1){
+;;         (_, read_int) = get_or_set_bit_in_slice(k, 0, 0, slice_value); ;; get bit k from slice_value
+;;         (tp, _) = get_or_set_bit_in_tuple(j, -1, read_int, tp, sizes, cum_sizes); ;; set read_int to bit j in tp
+;;       } else {
+;;         (_, read_int) = get_or_set_bit_in_tuple(j, 0, 0, tp, sizes, cum_sizes); ;; get bit j from tp
+;;       }
+;;       output_builder.store_uint(read_int, 1);
+;;     }
+;;     j += 1;
+;;   }
 
 
-  cell output_cell = output_builder.end_cell();
-  return (tp, output_cell.begin_parse());
-  ;;;;;;;;;;;;;;;; apparently the upper one is correct but lower one causes compile error
-  ;; slice ouput_slice = output_builder
-  ;;                     .end_cell()
-  ;;                     .begin_parse();
-  ;; return (tp, output_slice);
-}
+;;   cell output_cell = output_builder.end_cell();
+;;   return (tp, output_cell.begin_parse());
+;;   ;;;;;;;;;;;;;;;; apparently the upper one is correct but lower one causes compile error
+;;   ;; slice ouput_slice = output_builder
+;;   ;;                     .end_cell()
+;;   ;;                     .begin_parse();
+;;   ;; return (tp, output_slice);
+;; }
 
-(tuple) linked_list_to_tuple(cell linked_list) method_id {
-  tuple tp = empty_tuple();
-  while(-1){
-    slice cs = linked_list.begin_parse();
-    slice cs_only_data = cs.preload_bits(cs.slice_bits());
-    tp~tpush(cs_only_data);
+;; (tuple) linked_list_to_tuple(cell linked_list) method_id {
+;;   tuple tp = empty_tuple();
+;;   while(-1){
+;;     slice cs = linked_list.begin_parse();
+;;     slice cs_only_data = cs.preload_bits(cs.slice_bits());
+;;     tp~tpush(cs_only_data);
 
-    if(cs.slice_refs_empty?()){
-      return tp;
-    } else {
-      linked_list = cs~load_ref();
-    }
-  }
-  return tp; ;; added to disable compiler error (debug)
-}
+;;     if(cs.slice_refs_empty?()){
+;;       return tp;
+;;     } else {
+;;       linked_list = cs~load_ref();
+;;     }
+;;   }
+;;   return tp; ;; added to disable compiler error (debug)
+;; }
 
-(cell) tuple_to_linked_list(tuple tp) method_id {
-  slice last_cs = tp~tpop();
-  cell linked_list = begin_cell()
-                   .store_slice(last_cs)
-                   .end_cell();
-  while(tp.tuple_length() > 0){
-    last_cs = tp~tpop();
-    linked_list = begin_cell()
-                  .store_slice(last_cs)
-                  .store_ref(linked_list)
-                  .end_cell();
-  }
-  return linked_list;
-}
+;; (cell) tuple_to_linked_list(tuple tp) method_id {
+;;   slice last_cs = tp~tpop();
+;;   cell linked_list = begin_cell()
+;;                    .store_slice(last_cs)
+;;                    .end_cell();
+;;   while(tp.tuple_length() > 0){
+;;     last_cs = tp~tpop();
+;;     linked_list = begin_cell()
+;;                   .store_slice(last_cs)
+;;                   .store_ref(linked_list)
+;;                   .end_cell();
+;;   }
+;;   return linked_list;
+;; }
 
 
 ;; useful links:
