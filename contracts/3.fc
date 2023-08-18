@@ -51,7 +51,7 @@ forall X -> (tuple, X) ~tpop (tuple t) asm "TPOP";
 int tuple_length (tuple t) asm "TLEN";
 forall X -> (tuple) to_tuple (X x) asm "NOP";
 
-int preload_int(slice s, int len) asm "PLDIX";
+;; int preload_int(slice s, int len) asm "PLDIX";
 
 
 ;; 3rd try - last day
