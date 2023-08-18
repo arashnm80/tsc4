@@ -115,55 +115,55 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
       return linked_list; ;; this only happens in last 2 chunks
     } elseif(flag_size > cs_size){ ;; 2 haves should be checked, end of linked_list and beginning of ref
       
-      int check_int = int_from_two_slices(cs, cs_size, ref_cs, flag_size - cs_size);
-      if(check_int == flag){ ;; replacement should happen
-        int temp_int = ref_cs~load_uint(flag_size - cs_size);
-        if(ref_cs.slice_bits() > 0){
-          cell next_cell = begin_cell().store_slice(ref_cs).end_cell();
-          return begin_cell()
-                 .store_uint(value, value_size)
-                 .store_ref(find_and_replace(flag, value, next_cell))
-                 .end_cell();
-        } else {
-          return begin_cell()
-                 .store_uint(value, value_size)
-                 .end_cell();
-        }
-      } else { ;; we remove 1 bit from beginning and move forward
-        int one_bit = cs~load_uint(1);
-        if(cs.slice_bits() > 0){
-          next_cell = begin_cell().store_slice(cs).store_ref(ref).end_cell();
-        } else {
-          next_cell = ref;
-        }
-        return begin_cell()
-                .store_uint(one_bit, 1)
-                .store_ref(find_and_replace(flag, value, next_cell))
-                .end_cell();
-      }
+      ;; int check_int = int_from_two_slices(cs, cs_size, ref_cs, flag_size - cs_size);
+      ;; if(check_int == flag){ ;; replacement should happen
+      ;;   int temp_int = ref_cs~load_uint(flag_size - cs_size);
+      ;;   if(ref_cs.slice_bits() > 0){
+      ;;     cell next_cell = begin_cell().store_slice(ref_cs).end_cell();
+      ;;     return begin_cell()
+      ;;            .store_uint(value, value_size)
+      ;;            .store_ref(find_and_replace(flag, value, next_cell))
+      ;;            .end_cell();
+      ;;   } else {
+      ;;     return begin_cell()
+      ;;            .store_uint(value, value_size)
+      ;;            .end_cell();
+      ;;   }
+      ;; } else { ;; we remove 1 bit from beginning and move forward
+      ;;   int one_bit = cs~load_uint(1);
+      ;;   if(cs.slice_bits() > 0){
+      ;;     next_cell = begin_cell().store_slice(cs).store_ref(ref).end_cell();
+      ;;   } else {
+      ;;     next_cell = ref;
+      ;;   }
+      ;;   return begin_cell()
+      ;;           .store_uint(one_bit, 1)
+      ;;           .store_ref(find_and_replace(flag, value, next_cell))
+      ;;           .end_cell();
+      ;; }
 
     } else { ;; checking only linked list is enough becuse flag_size doesn't reach end of it
-      ;; int check_int = int_from_one_slice(cs, flag_size);
-      ;; if(check_int == flag){ ;; replacement should happen
-      ;;   remove_int_size = flag_size;
-      ;;   replace_int_size = value_size;
-      ;;   remove_int = cs~load_uint(remove_int_size);
-      ;;   replace_int = value;
-      ;; } else { ;; we remove 1 bit from beginning and move forward
-      ;;   remove_int_size = 1;
-      ;;   replace_int_size = 1;
-      ;;   remove_int = cs~load_uint(remove_int_size);
-      ;;   replace_int = remove_int;
-      ;; }
-      ;; if(cs.slice_bits() > 0){
-      ;;   next_cell = begin_cell().store_slice(cs).store_ref(ref).end_cell();
-      ;; } else {
-      ;;   next_cell = ref;
-      ;; }
-      ;; return begin_cell()
-      ;;         .store_uint(replace_int, replace_int_size)
-      ;;         .store_ref(find_and_replace(flag, value, next_cell))
-      ;;         .end_cell();
+      int check_int = int_from_one_slice(cs, flag_size);
+      if(check_int == flag){ ;; replacement should happen
+        remove_int_size = flag_size;
+        replace_int_size = value_size;
+        remove_int = cs~load_uint(remove_int_size);
+        replace_int = value;
+      } else { ;; we remove 1 bit from beginning and move forward
+        remove_int_size = 1;
+        replace_int_size = 1;
+        remove_int = cs~load_uint(remove_int_size);
+        replace_int = remove_int;
+      }
+      if(cs.slice_bits() > 0){
+        next_cell = begin_cell().store_slice(cs).store_ref(ref).end_cell();
+      } else {
+        next_cell = ref;
+      }
+      return begin_cell()
+              .store_uint(replace_int, replace_int_size)
+              .store_ref(find_and_replace(flag, value, next_cell))
+              .end_cell();
     }
   }
 
