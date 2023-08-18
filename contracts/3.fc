@@ -64,7 +64,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
     if(cs.slice_refs() == 0){
       return linked_list;
     } else {
-      cell ref = cs.preload_ref(cs);
+      cell ref = cs.preload_ref();
       slice ref_cs = ref.begin_parse();
       int ref_cs_size = ref_cs.slice_bits();
 
