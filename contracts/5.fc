@@ -23,7 +23,6 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 () recv_internal() {
 }
 
-
 ;; testable
 (tuple) fibonacci_sequence (int n, int k) method_id {
   ;; optimization
