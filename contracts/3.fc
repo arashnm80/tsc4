@@ -54,6 +54,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 int int_size(int n) asm "UBITSIZE";
 
 
+
 ;; 3rd try - last day
 (cell) find_and_replace(int flag, int value, cell linked_list) method_id {
   slice cs = linked_list.begin_parse();
