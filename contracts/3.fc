@@ -210,6 +210,13 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 (int) int_from_two_slices(slice cs1, int int_size_1, slice cs2, int int_size_2) method_id {
   int out1 = cs1~load_uint(int_size_1);
   int out2 = cs2~load_uint(int_size_2);
+
+  ;; test
+  out1 <<= int_size_2;
+  int out = out1 + out2;
+  return (out);
+  ;; test
+
   cell combination_cell = begin_cell()
                           .store_uint(out1, int_size_1)
                           .store_uint(out2, int_size_2)
