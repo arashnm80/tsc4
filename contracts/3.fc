@@ -43,7 +43,7 @@ slice skip_bits(slice s, int len) asm "SDSKIPFIRST";
 int slice_data_empty?(slice s) asm "SDEMPTY";
 ;; builder store_int(builder b, int x, int len) asm(x b len) "STIX"; ;; causes compile error
 (slice, int) ~load_int(slice s, int len) asm(s len -> 1 0) "LDIX";
-(slice, int) ~load_uint(slice s, int len) asm( -> 1 0) "LDUX";
+(slice, int) ~load_int(slice s, int len) asm( -> 1 0) "LDUX";
 int slice_bits(slice s) asm "SBITS";
 int slice_refs(slice s) asm "SREFS";
 (int, int) slice_bits_refs(slice s) asm "SBITREFS";
@@ -81,7 +81,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
   slice cs = linked_list.begin_parse();
   int flag_size = int_size(flag);
   int value_size = int_size(value);
-  int check = cs.preload_uint(flag_size);
+  int check = cs.preload_int(flag_size);
 
   int remove = 0;
   int remove_size = 0;
@@ -91,27 +91,27 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
   if(check == flag){
     remove_size = flag_size;
     replace_size = value_size;
-    remove = cs~load_uint(remove_size);
+    remove = cs~load_int(remove_size);
     replace = value;
   } else {
     remove_size = 1;
     replace_size = 1;
-    remove = cs~load_uint(remove_size);
+    remove = cs~load_int(remove_size);
     replace = remove;
   }
   if(cs.slice_bits() > 0){
     cell next_cell = begin_cell().store_slice(cs).end_cell();
-    return begin_cell().store_uint(replace, replace_size)
+    return begin_cell().store_int(replace, replace_size)
                         .store_ref(find_and_replace(flag, value, next_cell))
                         .end_cell();
   } else {
     if(cs.slice_refs() > 0){
       cell ref = cs~load_ref();
-      return begin_cell().store_uint(replace, replace_size)
+      return begin_cell().store_int(replace, replace_size)
                           .store_ref(find_and_replace(flag, value, ref))
                           .end_cell();
     } else {
-      return begin_cell().store_uint(replace, replace_size).end_cell();
+      return begin_cell().store_int(replace, replace_size).end_cell();
     }
   }
 }
@@ -126,14 +126,14 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
   cell ref = cs.preload_ref();
   slice ref_cs = ref.begin_parse();
   
-  int check1 = cs.preload_uint(part1_size);
-  int check2 = ref_cs.preload_uint(part2_size);
+  int check1 = cs.preload_int(part1_size);
+  int check2 = ref_cs.preload_int(part2_size);
   slice both = begin_cell()
-              .store_uint(check1, part1_size)
-              .store_uint(check2, part2_size)
+              .store_int(check1, part1_size)
+              .store_int(check2, part2_size)
               .end_cell()
               .begin_parse();
-  int check = both.preload_uint(flag_size);
+  int check = both.preload_int(flag_size);
 
   int remove = 0;
   int remove_size = 0;
@@ -141,31 +141,31 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
   int replace_size = 0;
 
   if(check == flag){
-    int temp_int = ref_cs~load_uint(part2_size);
+    int temp_int = ref_cs~load_int(part2_size);
     if(ref_cs.slice_bits() > 0){
       cell next_cell = begin_cell().store_slice(ref_cs).end_cell();
-      return begin_cell().store_uint(value, value_size)
+      return begin_cell().store_int(value, value_size)
                         .store_ref(find_and_replace(flag, value, next_cell))
                         .end_cell();
     } else {
       if(ref_cs.slice_refs() > 0){
         cell ref_ref = ref_cs~load_ref();
-        return begin_cell().store_uint(value, value_size)
+        return begin_cell().store_int(value, value_size)
                           .store_ref(find_and_replace(flag, value, ref_ref))
                           .end_cell();
       } else {
-        return begin_cell().store_uint(value, value_size).end_cell();
+        return begin_cell().store_int(value, value_size).end_cell();
       }
     }
   } else {
-    int one_bit = cs~load_uint(1);
+    int one_bit = cs~load_int(1);
     if(cs.slice_bits() > 0){
       cell next_cell = begin_cell().store_slice(cs).end_cell();
-      return begin_cell().store_uint(one_bit, 1)
+      return begin_cell().store_int(one_bit, 1)
                         .store_ref(find_and_replace(flag, value, next_cell))
                         .end_cell();
     } else {
-      return begin_cell().store_uint(one_bit, 1)
+      return begin_cell().store_int(one_bit, 1)
                         .store_ref(find_and_replace(flag, value, ref))
                         .end_cell();
     }
@@ -221,23 +221,23 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 ;;       if(check_int == flag){ ;; replacement should happen
 ;;         remove_int_size = flag_size;
 ;;         replace_int_size = value_size;
-;;         remove_int = cs~load_uint(remove_int_size);
+;;         remove_int = cs~load_int(remove_int_size);
 ;;         replace_int = value;
 ;;       } else { ;; we remove 1 bit from beginning and move forward
 ;;         remove_int_size = 1;
 ;;         replace_int_size = 1;
-;;         remove_int = cs~load_uint(remove_int_size);
+;;         remove_int = cs~load_int(remove_int_size);
 ;;         replace_int = remove_int;
 ;;       }
 ;;       if(cs.slice_bits() > 0){
 ;;         cell next_cell = begin_cell().store_slice(cs).end_cell();
 ;;         return begin_cell()
-;;                 .store_uint(replace_int, replace_int_size)
+;;                 .store_int(replace_int, replace_int_size)
 ;;                 .store_ref(find_and_replace(flag, value, next_cell))
 ;;                 .end_cell();
 ;;       } else {
 ;;         return begin_cell()
-;;                 .store_uint(replace_int, replace_int_size)
+;;                 .store_int(replace_int, replace_int_size)
 ;;                 .end_cell();
 ;;       }
 ;;     }
@@ -253,27 +253,27 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
       
 ;;       int check_int = int_from_two_slices(cs, cs_size, ref_cs, flag_size - cs_size);
 ;;       if(check_int == flag){ ;; replacement should happen
-;;         int temp_int = ref_cs~load_uint(flag_size - cs_size);
+;;         int temp_int = ref_cs~load_int(flag_size - cs_size);
 ;;         if(ref_cs.slice_bits() > 0){
 ;;           cell next_cell = begin_cell().store_slice(ref_cs).end_cell();
 ;;           return begin_cell()
-;;                  .store_uint(value, value_size)
+;;                  .store_int(value, value_size)
 ;;                  .store_ref(find_and_replace(flag, value, next_cell))
 ;;                  .end_cell();
 ;;         } else {
 ;;           return begin_cell()
-;;                  .store_uint(value, value_size)
+;;                  .store_int(value, value_size)
 ;;                  .end_cell();
 ;;         }
 ;;       } else { ;; we remove 1 bit from beginning and move forward
-;;         int one_bit = cs~load_uint(1);
+;;         int one_bit = cs~load_int(1);
 ;;         if(cs.slice_bits() > 0){
 ;;           next_cell = begin_cell().store_slice(cs).store_ref(ref).end_cell();
 ;;         } else {
 ;;           next_cell = ref;
 ;;         }
 ;;         return begin_cell()
-;;                 .store_uint(one_bit, 1)
+;;                 .store_int(one_bit, 1)
 ;;                 .store_ref(find_and_replace(flag, value, next_cell))
 ;;                 .end_cell();
 ;;       }
@@ -283,12 +283,12 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 ;;       if(check_int == flag){ ;; replacement should happen
 ;;         remove_int_size = flag_size;
 ;;         replace_int_size = value_size;
-;;         remove_int = cs~load_uint(remove_int_size);
+;;         remove_int = cs~load_int(remove_int_size);
 ;;         replace_int = value;
 ;;       } else { ;; we remove 1 bit from beginning and move forward
 ;;         remove_int_size = 1;
 ;;         replace_int_size = 1;
-;;         remove_int = cs~load_uint(remove_int_size);
+;;         remove_int = cs~load_int(remove_int_size);
 ;;         replace_int = remove_int;
 ;;       }
 ;;       if(cs.slice_bits() > 0){
@@ -297,7 +297,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 ;;         next_cell = ref;
 ;;       }
 ;;       return begin_cell()
-;;               .store_uint(replace_int, replace_int_size)
+;;               .store_int(replace_int, replace_int_size)
 ;;               .store_ref(find_and_replace(flag, value, next_cell))
 ;;               .end_cell();
 ;;     }
@@ -320,7 +320,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 ;; ;;     slice empty_slice = "";
 ;; ;;     ;; get slice at index i
 ;; ;;     (tuple temp_tp, slice check) = get_or_set_slice_in_tuple(i, 0, empty_slice, tp, sizes, cum_sizes);
-;; ;;     int int_from_check = check~load_uint(flag_size);
+;; ;;     int int_from_check = check~load_int(flag_size);
 ;; ;;     if(flag == int_from_check){
 ;; ;;       slice value_to_slice = int_to_slice(value, flag_size);
 ;; ;;       ;; set value as a replacement for flag
@@ -339,13 +339,13 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 
 ;; ;; parameters should be checked before passing
 ;; (int) int_from_one_slice(slice cs, int int_size) method_id {
-;;   int output = cs~load_uint(int_size); ;; maybe could be changed to preload later to reduce gas
+;;   int output = cs~load_int(int_size); ;; maybe could be changed to preload later to reduce gas
 ;;   return output;
 ;; }
 
 ;; (int) int_from_two_slices(slice cs1, int int_size_1, slice cs2, int int_size_2) method_id {
-;;   int out1 = cs1~load_uint(int_size_1);
-;;   int out2 = cs2~load_uint(int_size_2);
+;;   int out1 = cs1~load_int(int_size_1);
+;;   int out2 = cs2~load_int(int_size_2);
 
 ;;   ;; test
 ;;   out1 <<= int_size_2;
@@ -354,11 +354,11 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 ;;   ;; test
 
 ;;   cell combination_cell = begin_cell()
-;;                           .store_uint(out1, int_size_1)
-;;                           .store_uint(out2, int_size_2)
+;;                           .store_int(out1, int_size_1)
+;;                           .store_int(out2, int_size_2)
 ;;                           .end_cell();
 ;;   slice combination_cs = combination_cell.begin_parse();
-;;   int combination_out_int = combination_cs~load_uint(int_size_1 + int_size_2);
+;;   int combination_out_int = combination_cs~load_int(int_size_1 + int_size_2);
 ;;   return combination_out_int;
 ;; }
 
@@ -391,17 +391,17 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 ;;     if(check_int == flag){ ;; replacement should happen
 ;;       remove_int_size = flag_size;
 ;;       replace_int_size = value_size;
-;;       remove_int = cs~load_uint(remove_int_size);
+;;       remove_int = cs~load_int(remove_int_size);
 ;;       replace_int = value;
 ;;     } else { ;; we remove 1 bit from beginning and move forward
 ;;       remove_int_size = 1;
 ;;       replace_int_size = 1;
-;;       remove_int = cs~load_uint(remove_int_size);
+;;       remove_int = cs~load_int(remove_int_size);
 ;;       replace_int = remove_int;
 ;;     }
 ;;     cell next_cell = begin_cell().store_slice(cs).end_cell();
 ;;     return begin_cell()
-;;             .store_uint(replace_int, replace_int_size)
+;;             .store_int(replace_int, replace_int_size)
 ;;             .store_ref(find_and_replace(flag, value, next_cell))
 ;;             .end_cell();
 ;;   }
@@ -410,7 +410,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 
 ;; ;; (slice) int_to_slice(int n, int n_size) method_id {
 ;; ;;   slice output = begin_cell()
-;; ;;                   .store_uint(n, n_size)
+;; ;;                   .store_int(n, n_size)
 ;; ;;                   .end_cell()
 ;; ;;                   .begin_parse();
 ;; ;;   return output;
@@ -440,16 +440,16 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 ;; ;;   int j = 0; 
 ;; ;;   int cs_size = cs.slice_bits();
 ;; ;;   while(j < cs_size){
-;; ;;     int read_int = cs~load_uint(1);
+;; ;;     int read_int = cs~load_int(1);
 ;; ;;     if(j == i){
 ;; ;;       if(job == -1){
 ;; ;;         output_int = int_value;
 ;; ;;       } else {
 ;; ;;         output_int = read_int;
 ;; ;;       }
-;; ;;       output_builder = output_builder.store_uint(output_int, 1);
+;; ;;       output_builder = output_builder.store_int(output_int, 1);
 ;; ;;     }
-;; ;;     output_builder = output_builder.store_uint(read_int, 1);
+;; ;;     output_builder = output_builder.store_int(read_int, 1);
 ;; ;;   }
 
 ;; ;;   slice output_slice = output_builder.end_cell().begin_parse();
@@ -499,7 +499,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 ;; ;;       } else {
 ;; ;;         (_, read_int) = get_or_set_bit_in_tuple(j, 0, 0, tp, sizes, cum_sizes); ;; get bit j from tp
 ;; ;;       }
-;; ;;       output_builder.store_uint(read_int, 1);
+;; ;;       output_builder.store_int(read_int, 1);
 ;; ;;     }
 ;; ;;     j += 1;
 ;; ;;   }
