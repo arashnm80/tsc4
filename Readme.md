@@ -1,3 +1,7 @@
+# Info
+This repository is a fork from https://github.com/ton-community/tsc4 \
+I solved 4 tasks out of 5 (only task3 left). My answers are available in contracts folder. 
+
 # 🏆 Welcome to the TON Smart Challenge #4
 ### by TON Foundation
 
